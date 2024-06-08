@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/statistics_fragment"
+        android:enabled="true"
+        android:icon="@drawable/ic_user"
+        android:title="Stadistics"
+        android:visible="true"
+        app:background="@drawable/nav_item_background" />
+    <item
+        android:id="@+id/camera_fragment"
+        android:enabled="true"
+        android:icon="@drawable/ic_camera"
+        android:title="Camera"
+        android:visible="true"
+        app:background="@drawable/nav_item_background" />
+    <item
+        android:id="@+id/alarm_fragment"
+        android:enabled="true"
+        android:icon="@drawable/ic_bell"
+        android:title="Alarm"
+        android:visible="true"
+        app:background="@drawable/nav_item_background" />
+    <item
+        android:id="@+id/contacts_fragment"
+        android:enabled="true"
+        android:icon="@drawable/ic_phone"
+        android:title="Contacts"
+        android:visible="true"
+        app:background="@drawable/nav_item_background" />
+</menu>

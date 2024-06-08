@@ -22,7 +22,7 @@ apply plugin: 'de.undercouch.download'
 
 android {
     namespace 'com.google.mediapipe.examples.facedetection'
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.google.mediapipe.examples.facedetection"
@@ -83,6 +83,7 @@ dependencies {
     implementation 'com.google.android.material:material:1.0.0'
     implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.0.0'
     implementation 'androidx.fragment:fragment-ktx:1.5.4'
+    implementation 'androidx.activity:activity:1.8.0'
 
     // Navigation library
     def nav_version = "2.3.5"

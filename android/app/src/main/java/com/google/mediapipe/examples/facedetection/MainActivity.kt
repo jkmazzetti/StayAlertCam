@@ -17,31 +17,42 @@ package com.google.mediapipe.examples.facedetection
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.activity.viewModels
-import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.setupWithNavController
+import androidx.fragment.app.Fragment
 import com.google.mediapipe.examples.facedetection.databinding.ActivityMainBinding
+import com.google.mediapipe.examples.facedetection.fragments.CameraFragment
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var activityMainBinding: ActivityMainBinding
-    private val viewModel: MainViewModel by viewModels()
+    private lateinit var binding: ActivityMainBinding
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        activityMainBinding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(activityMainBinding.root)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        replaceFragment(StatisticsFragment())
 
-        val navHostFragment =
-            supportFragmentManager.findFragmentById(R.id.fragment_container) as NavHostFragment
-        val navController = navHostFragment.navController
-        activityMainBinding.navigation.setupWithNavController(navController)
-        activityMainBinding.navigation.setOnNavigationItemReselectedListener {
-            // ignore the reselection
+        binding.navigation.setOnNavigationItemSelectedListener{
+
+            when(it.itemId){
+
+                R.id.statistics_fragment -> replaceFragment(StatisticsFragment())
+                R.id.camera_fragment -> replaceFragment(CameraFragment())
+                R.id.alarm_fragment -> replaceFragment(AlarmFragment())
+                R.id.contacts_fragment -> replaceFragment(ContactsFragment())
+
+                else ->{
+
+                }
+            }
+            true
         }
     }
 
-    override fun onBackPressed() {
-        finish()
+    private fun replaceFragment(fragment : Fragment) {
+        val fragmentManager = supportFragmentManager
+        val fragmentTransition = fragmentManager.beginTransaction()
+        fragmentTransition.replace(R.id.fragment_container, fragment)
+        fragmentTransition.commit()
     }
 }
