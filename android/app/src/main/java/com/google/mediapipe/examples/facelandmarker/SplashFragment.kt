@@ -1,4 +1,4 @@
-package com.google.mediapipe.examples.facedetection
+package com.google.mediapipe.examples.facelandmarker
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment

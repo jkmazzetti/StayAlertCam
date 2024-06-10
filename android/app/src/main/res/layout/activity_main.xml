@@ -27,9 +27,6 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-
-
-
         <View
             android:id="@+id/view"
             android:layout_width="match_parent"
@@ -48,7 +45,7 @@
             android:keepScreenOn="true"
             app:defaultNavHost="true"
             app:navGraph="@navigation/nav_graph"
-            tools:context=".MainActivity" />
+            tools:context="com.google.mediapipe.examples.facelandmarker.MainActivity" />
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/navigation"

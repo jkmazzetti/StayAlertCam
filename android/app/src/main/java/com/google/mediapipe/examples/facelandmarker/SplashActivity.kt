@@ -1,10 +1,11 @@
-package com.google.mediapipe.examples.facedetection
+package com.google.mediapipe.examples.facelandmarker
 
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import androidx.appcompat.app.AppCompatActivity
+import com.google.mediapipe.examples.facelandmarker.R
 
 class SplashActivity : AppCompatActivity() {
 

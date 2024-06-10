@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.google.mediapipe.examples.facedetection
+package com.google.mediapipe.examples.facelandmarker
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import com.google.mediapipe.examples.facedetection.databinding.ActivityMainBinding
-import com.google.mediapipe.examples.facedetection.fragments.CameraFragment
+import com.google.mediapipe.examples.facelandmarker.R
+import com.google.mediapipe.examples.facelandmarker.databinding.ActivityMainBinding
+import com.google.mediapipe.examples.facelandmarker.fragment.CameraFragment
+//import com.google.mediapipe.examples.facelandmarker.fragments.CameraFragment
 
 class MainActivity : AppCompatActivity() {
 

@@ -10,7 +10,7 @@
     android:layout_centerVertical="false"
     android:background="@color/white_stayalert"
     android:foregroundGravity="center"
-    tools:context=".SplashActivity">
+    tools:context="com.google.mediapipe.examples.facelandmarker.SplashActivity">
 
     <ImageView
         android:id="@+id/imageView2"
