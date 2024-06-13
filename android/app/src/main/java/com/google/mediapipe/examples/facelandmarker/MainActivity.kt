@@ -17,6 +17,8 @@ package com.google.mediapipe.examples.facelandmarker
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
+import android.widget.Button
 import androidx.fragment.app.Fragment
 import com.google.mediapipe.examples.facelandmarker.R
 import com.google.mediapipe.examples.facelandmarker.databinding.ActivityMainBinding
@@ -57,4 +59,10 @@ class MainActivity : AppCompatActivity() {
         fragmentTransition.replace(R.id.fragment_container, fragment)
         fragmentTransition.commit()
     }
+
+//    fun onViewCreated(view: View, savedInstanceState: Bundle?){
+//        super.onViewCreated(view, savedInstanceState)
+//
+//        val button: Button = view.findViewById(R.id.button2)
+//    }
 }

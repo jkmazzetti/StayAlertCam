@@ -32,4 +32,55 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="630dp" >
+
+        <FrameLayout
+            android:id="@+id/container_sleep_sing"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/round_background_desactive"
+            android:radius="250dp"
+            android:layout_marginStart="20dp" >
+
+            <ImageView
+                android:id="@+id/image_sleep_sing"
+                android:layout_width="128dp"
+                android:layout_height="128dp"
+                android:layout_gravity="center"
+                android:radius="250dp"
+                app:srcCompat="@drawable/sleep_sing" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/container_person_yawn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/round_background_desactive"
+            android:layout_marginStart="120dp"
+            >
+
+            <ImageView
+                android:id="@+id/image_person_yawn"
+                android:layout_width="128dp"
+                android:layout_height="128dp"
+                android:layout_gravity="center"
+                app:srcCompat="@drawable/person_yawn" />
+
+        </FrameLayout>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btn_start_trip"
+        android:layout_width="349dp"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/stay_alert_primary"
+        android:text="Iniciar Viaje"
+        android:textColor="@color/white_stayalert"
+        app:layout_anchor="@+id/view_finder"
+        app:layout_anchorGravity="center" />
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
