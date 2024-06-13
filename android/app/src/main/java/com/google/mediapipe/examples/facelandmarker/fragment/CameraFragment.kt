@@ -16,13 +16,16 @@
 package com.google.mediapipe.examples.facelandmarker.fragment
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.content.res.Configuration
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
+import android.widget.Button
 import android.widget.Toast
 import androidx.camera.core.Preview
 import androidx.camera.core.CameraSelector
@@ -35,23 +38,16 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.Navigation
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.viewpager2.widget.ViewPager2.SCROLL_STATE_DRAGGING
-import androidx.viewpager2.widget.ViewPager2.SCROLL_STATE_IDLE
-import androidx.viewpager2.widget.ViewPager2.SCROLL_STATE_SETTLING
-import androidx.viewpager2.widget.ViewPager2.ScrollState
 import com.google.mediapipe.examples.facelandmarker.FaceLandmarkerHelper
 import com.google.mediapipe.examples.facelandmarker.MainViewModel
 import com.google.mediapipe.examples.facelandmarker.R
 import com.google.mediapipe.examples.facelandmarker.databinding.FragmentCameraBinding
 import com.google.mediapipe.tasks.vision.core.RunningMode
-import java.util.Locale
-import java.util.Optional
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
-import kotlin.jvm.optionals.toList
-import kotlin.math.roundToInt
+import android.media.MediaPlayer
+import android.widget.FrameLayout
 
 class CameraFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
 
@@ -75,6 +71,30 @@ class CameraFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
     private var camera: Camera? = null
     private var cameraProvider: ProcessCameraProvider? = null
     private var cameraFacing = CameraSelector.LENS_FACING_FRONT
+
+
+    private var reference_point1: Float = 0f
+    private var reference_point2: Float = 0f
+    private var left_eye_bottom_point: Float = 0f
+    private var left_eye_top_point: Float = 0f
+    private var right_eye_bottom_point: Float = 0f
+    private var right_eye_top_point: Float = 0f
+    private var mouth_bottom_point: Float = 0f
+    private var mouth_top_point: Float = 0f
+    private var ratio_left_eye: Float = 0f
+    private var ratio_right_eye: Float = 0f
+    private var ratio_mouth: Float = 0f
+    private var count_blink: Int = 0
+    private var count_yawn: Int = 0
+    private var count_tired: Int = 0
+
+    private var isPopupShowing = false
+    private var canShowPopup = true
+    private var mediaPlayer: MediaPlayer? = null
+
+    private var tripStarted = false
+
+
 
     /** Blocking ML operations are performed using this executor */
     private lateinit var backgroundExecutor: ExecutorService
@@ -163,7 +183,75 @@ class CameraFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
 
         // Attach listeners to UI control widgets
         initBottomSheetControls()
+
+        val startButton: Button = view.findViewById(R.id.btn_start_trip)
+        startButton.setOnClickListener {
+            startTrip(view)
+            startButton.visibility = View.GONE
+        }
     }
+
+    private fun startTrip(view: View){
+        val container_sleep_sing: FrameLayout = view.findViewById(R.id.container_sleep_sing)
+        val container_person_yawn: FrameLayout = view.findViewById(R.id.container_person_yawn)
+
+        tripStarted = true
+
+        container_sleep_sing.setBackgroundResource(R.drawable.round_background_active)
+        container_person_yawn.setBackgroundResource(R.drawable.round_background_active)
+    }
+    private fun startPopupCooldown() {
+        canShowPopup = false
+        Handler(Looper.getMainLooper()).postDelayed({
+            canShowPopup = true
+        }, 30000) // 30,000 ms = 30 segundos
+    }
+
+    private fun playAlertSound() {
+        mediaPlayer = MediaPlayer.create(context, R.raw.alarm_sound)
+        mediaPlayer?.setOnPreparedListener {
+            mediaPlayer?.start()
+        }
+        mediaPlayer?.setOnCompletionListener {
+            it.release() // Liberar los recursos una vez que el sonido termina
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        mediaPlayer?.release() // Liberar MediaPlayer cuando se detenga la actividad o fragmento
+        mediaPlayer = null
+    }
+
+    private fun stopAlertSound() {
+        mediaPlayer?.stop()
+        mediaPlayer?.release()
+        mediaPlayer = null
+    }
+    private fun showGesturePopup() {
+        if (isPopupShowing || !canShowPopup) return
+
+        isPopupShowing = true
+        activity?.let {
+            val builder = AlertDialog.Builder(it)
+            val inflater = requireActivity().layoutInflater
+            val dialogView = inflater.inflate(R.layout.fragment_popup_tired, null)
+            builder.setView(dialogView)
+            val alertDialog = builder.create()
+            val hiddenButton: Button = dialogView.findViewById(R.id.hiddenButton)
+            hiddenButton.setOnClickListener {
+                alertDialog.dismiss()
+                stopAlertSound()
+                isPopupShowing = false
+                startPopupCooldown()
+            }
+            alertDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+            alertDialog.show()
+
+            playAlertSound()
+        }
+    }
+
 
     private fun initBottomSheetControls() {
         // init bottom sheet settings
@@ -380,12 +468,57 @@ class CameraFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
             fragmentCameraBinding.viewFinder.display.rotation
     }
 
+    private fun isTiredGestureDetected(resultBundle: FaceLandmarkerHelper.ResultBundle, containerPersonYawn: View, containerSleepSing: View) {
+//        println("resultBundle ${resultBundle.result.faceLandmarks().get(0).get(386).y()}")
+
+        reference_point1 = resultBundle.result.faceLandmarks().get(0).get(5).y()*1920f
+        reference_point2 = resultBundle.result.faceLandmarks().get(0).get(4).y()*1920f
+
+        left_eye_bottom_point = resultBundle.result.faceLandmarks().get(0).get(374).y()*1920f
+        left_eye_top_point = resultBundle.result.faceLandmarks().get(0).get(386).y()*1920f
+
+        right_eye_bottom_point = resultBundle.result.faceLandmarks().get(0).get(145).y()*1920f
+        right_eye_top_point = resultBundle.result.faceLandmarks().get(0).get(159).y()*1920f
+
+        ratio_left_eye = (left_eye_bottom_point - left_eye_top_point) / (reference_point2 - reference_point1)
+        ratio_right_eye = (right_eye_bottom_point - right_eye_top_point) / (reference_point2 - reference_point1)
+
+        mouth_bottom_point = resultBundle.result.faceLandmarks().get(0).get(17).y()*1920f
+        mouth_top_point = resultBundle.result.faceLandmarks().get(0).get(0).y()*1920f
+
+        ratio_mouth  = (mouth_bottom_point - mouth_top_point) / (reference_point2 - reference_point1)
+
+
+        if(ratio_left_eye < 0.8 && ratio_right_eye < 0.8){
+            println("Fatiga PARPADEO  ${ratio_left_eye}")
+            count_blink += 1
+            count_tired += 1
+        }
+
+        if(ratio_mouth > 7){
+            println("Fatiga bostezo  ${ratio_mouth}")
+            count_yawn += 1
+            count_tired += 1
+        }
+        println("Fatiga count_tired  ${count_tired}")
+
+
+        if(count_tired > 15){
+            showGesturePopup()
+            containerPersonYawn.setBackgroundResource(R.drawable.round_background_warning)
+            containerSleepSing.setBackgroundResource(R.drawable.round_background_warning)
+        }
+    }
+
     // Update UI after face have been detected. Extracts original
     // image height/width to scale and place the landmarks properly through
     // OverlayView
     override fun onResults(
         resultBundle: FaceLandmarkerHelper.ResultBundle
     ) {
+        if (!tripStarted) {
+            return  // Si tripStarted es falso, salir sin hacer nada
+        }
         activity?.runOnUiThread {
             if (_fragmentCameraBinding != null) {
 //                if (fragmentCameraBinding.recyclerviewResults.scrollState != SCROLL_STATE_DRAGGING) {
@@ -398,24 +531,34 @@ class CameraFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
 //                    String.format("%d ms", resultBundle.inferenceTime)
 
                 // Pass necessary information to OverlayView for drawing on the canvas
-                fragmentCameraBinding.overlay.setResults(
-                    resultBundle.result,
-                    resultBundle.inputImageHeight,
-                    resultBundle.inputImageWidth,
-                    RunningMode.LIVE_STREAM
-                )
+//                fragmentCameraBinding.overlay.setResults(
+////                    ,
+//                    resultBundle.result,
+//                    resultBundle.inputImageHeight,
+//                    resultBundle.inputImageWidth,
+//                    RunningMode.LIVE_STREAM
+//                )
+//                popup_tired.findById(popup_tired)
+//                fragmentCameraBinding.overlay.getMessage()
                 // Force a redraw
-                fragmentCameraBinding.overlay.invalidate()
+//                fragmentCameraBinding.overlay.invalidate()
+
+                val containerPersonYawn: FrameLayout = _fragmentCameraBinding!!.containerPersonYawn
+
+                val containerSleepSing: FrameLayout = _fragmentCameraBinding!!.containerSleepSing
+
+
+                isTiredGestureDetected(resultBundle, containerPersonYawn, containerSleepSing)
             }
         }
     }
 
     override fun onEmpty() {
-        fragmentCameraBinding.overlay.clear()
-        activity?.runOnUiThread {
-            faceBlendshapesResultAdapter.updateResults(null)
-            faceBlendshapesResultAdapter.notifyDataSetChanged()
-        }
+//        fragmentCameraBinding.overlay.clear()
+//        activity?.runOnUiThread {
+//            faceBlendshapesResultAdapter.updateResults(null)
+//            faceBlendshapesResultAdapter.notifyDataSetChanged()
+//        }
     }
 
     override fun onError(error: String, errorCode: Int) {
