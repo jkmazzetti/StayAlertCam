@@ -21,7 +21,7 @@
 
     <fragment
         android:id="@+id/permissions_fragment"
-        android:name="com.google.mediapipe.examples.facedetection.fragments.PermissionsFragment"
+        android:name="com.google.mediapipe.examples.facelandmarker.fragment.PermissionsFragment"
         android:label="PermissionsFragment">
 
         <action
@@ -34,7 +34,7 @@
 
     <fragment
         android:id="@+id/camera_fragment"
-        android:name="com.google.mediapipe.examples.facedetection.fragments.CameraFragment"
+        android:name="com.google.mediapipe.examples.facelandmarker.fragment.CameraFragment"
         android:label="CameraFragment">
 
         <action
@@ -45,8 +45,5 @@
 
     </fragment>
 
-    <fragment
-        android:id="@+id/gallery_fragment"
-        android:name="com.google.mediapipe.examples.facedetection.fragments.GalleryFragment"
-        android:label="GalleryFragment" />
+
 </navigation>

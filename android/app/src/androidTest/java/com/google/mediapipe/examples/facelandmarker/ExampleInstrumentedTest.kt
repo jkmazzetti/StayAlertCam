@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.google.mediapipe.examples.facedetection
+package com.google.mediapipe.examples.facelandmarker
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -34,6 +34,6 @@ class ExampleInstrumentedTest {
     fun useAppContext() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals("com.google.mediapipe.examples.facedetection", appContext.packageName)
+        assertEquals("com.google.mediapipe.examples.facelandmarker", appContext.packageName)
     }
 }

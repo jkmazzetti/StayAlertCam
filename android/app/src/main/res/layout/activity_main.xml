@@ -22,33 +22,16 @@
     android:background="@android:color/transparent">
 
     <RelativeLayout
+        android:id="@+id/relativeLayout2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/toolbar_background"
-            app:contentInsetStart="0dp"
-            app:contentInsetStartWithNavigation="0dp">
-
-            <ImageView
-                android:id="@+id/toolbar_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:src="@drawable/ic_launcher" />
-
-        </androidx.appcompat.widget.Toolbar>
-
 
         <View
             android:id="@+id/view"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_below="@id/toolbar"
+
             android:background="@android:color/darker_gray" />
 
         <androidx.fragment.app.FragmentContainerView
@@ -56,22 +39,25 @@
             android:name="androidx.navigation.fragment.NavHostFragment"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_below="@id/view"
             android:layout_above="@id/navigation"
+            android:layout_below="@id/view"
             android:background="@android:color/transparent"
             android:keepScreenOn="true"
             app:defaultNavHost="true"
             app:navGraph="@navigation/nav_graph"
-            tools:context=".MainActivity" />
+            tools:context="com.google.mediapipe.examples.facelandmarker.MainActivity" />
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/navigation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            app:itemIconTint="@color/bg_nav_item"
-            app:itemTextColor="@color/bg_nav_item"
-            app:menu="@menu/menu_bottom_nav" />
+            app:itemBackground="@drawable/nav_item_background"
+            app:itemIconTint="@color/bottom_sheet_text_color"
+            app:itemTextColor="@color/bottom_sheet_text_color"
+            app:menu="@menu/bottom_nav_menu" />
 
     </RelativeLayout>
+
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
