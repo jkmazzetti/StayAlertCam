@@ -16,7 +16,7 @@
 -->
 <resources>
     <color name="mp_color_primary">#007F8B</color>
-    <color name="mp_primary">#FF9E0C</color>
+    <color name="mp_primary">#FF8736</color>
     <color name="mp_variant">#CC9E0C</color>
     <color name="navbar_color">#1E1E1E</color>
     <color name="toolbar_background">#000000</color>
