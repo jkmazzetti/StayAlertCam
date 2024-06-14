@@ -11,7 +11,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/mp_primary"
+        android:background="@color/stay_alert_primary"
         android:paddingBottom="15dp"
         android:paddingTop="15dp"
         android:orientation="vertical">
