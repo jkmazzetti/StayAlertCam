@@ -1,0 +1,7 @@
+<resources>
+    <declare-styleable name="InfoBoxView">
+        <attr name="info" format="string" />
+        <attr name="title" format="string" />
+        <attr name="description" format="string" />
+    </declare-styleable>
+</resources>

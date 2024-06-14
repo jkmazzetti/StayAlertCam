@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <!-- Left side -->
+        <LinearLayout
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:background="@drawable/rounded_gray_background"
+            android:paddingVertical="18dp"
+            android:layout_marginEnd="17dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/infoTextView"
+                android:textColor="#000000"
+                android:textSize="16sp"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="0" />
+
+        </LinearLayout>
+
+        <!-- Right side -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/titleTextView"
+                android:textColor="#1E1E1E"
+                android:textSize="16sp"
+                android:layout_marginBottom="12dp"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="Placeholder" />
+
+            <TextView
+                android:id="@+id/descriptionTextView"
+                android:textColor="#1E1E1E"
+                android:textSize="14sp"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="Placeholder" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</merge>
