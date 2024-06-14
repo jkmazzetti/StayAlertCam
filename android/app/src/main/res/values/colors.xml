@@ -16,15 +16,9 @@
 -->
 <resources>
     <color name="mp_color_primary">#007F8B</color>
-    <color name="mp_primary">#FF9E0C</color>
+    <color name="mp_primary">#FF8736</color>
     <color name="mp_variant">#CC9E0C</color>
-    <color name="stay_alert_color_primary">#8B0000</color>
-    <color name="stay_alert_primary">#FF9E0C</color>
-    <color name="stay_alert_variant">#CC9E0C</color>
-    <color name="popup_tired">#FFC107</color>
-    <color name="popup_sleep">#FF5252</color>
     <color name="navbar_color">#1E1E1E</color>
-    <color name="black">#000000</color>
     <color name="toolbar_background">#000000</color>
     <color name="ic_launcher_background">#000000</color>
     <color name="bottom_sheet_background">#EEEEEE</color>
@@ -33,7 +27,6 @@
     <color name="icFocused">#DDFFFFFF</color>
     <color name="icPressed">#AAFFFFFF</color>
     <color name="nav_item_selected">#FF8736</color> <!-- Color de fondo cuando el ítem está seleccionado -->
-    <color name="nav_item_selected">#FF8736</color>
     <color name="nav_item_default">#1E1E1E</color>
     <color name="white_stayalert">#E5E5E5</color>
 </resources>
