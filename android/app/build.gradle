@@ -22,12 +22,12 @@ apply plugin: 'de.undercouch.download'
 
 android {
     namespace 'com.google.mediapipe.examples.facelandmarker'
-    compileSdk 34
+    compileSdk 30
 
     defaultConfig {
         applicationId "com.google.mediapipe.examples.facelandmarker"
         minSdk 24
-        targetSdk 33
+        targetSdk 30
         versionCode 1
         versionName "1.0"
 
