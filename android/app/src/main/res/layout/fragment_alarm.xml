@@ -38,6 +38,11 @@
 
         <LinearLayout
             android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal"></LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="30dp"
             android:orientation="horizontal">
 
@@ -75,6 +80,10 @@
 
         <LinearLayout
             android:layout_width="match_parent"
+            android:layout_height="26dp"
+            android:orientation="horizontal"></LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="28dp"
             android:orientation="horizontal">
 
@@ -91,49 +100,63 @@
                 android:textStyle="bold" />
 
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="276dp"
             android:orientation="horizontal">
+
             <View
                 android:layout_width="50dp"
                 android:layout_height="match_parent" />
 
 
-        <RadioGroup
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" >
-
-            <RadioButton
-                android:id="@+id/radioButton2"
+            <RadioGroup
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Radar (Predeterminado)" />
+                android:layout_height="276dp">
 
-            <RadioButton
-                android:id="@+id/radioButton3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Animo" />
+                <RadioButton
+                    android:id="@+id/radiobutton_Radar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Radar (Predeterminado)" />
 
-            <RadioButton
-                android:id="@+id/radioButton4"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Destello" />
+                <RadioButton
+                    android:id="@+id/radiobutton_Animo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Animo" />
 
-            <RadioButton
-                android:id="@+id/radioButton5"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Estrellas" />
+                <RadioButton
+                    android:id="@+id/radiobutton_Destello"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Destello" />
 
-            <RadioButton
-                android:id="@+id/radioButton6"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Olas" />
-        </RadioGroup>
+                <RadioButton
+                    android:id="@+id/radiobutton_Estrellas"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Estrellas" />
+
+                <RadioButton
+                    android:id="@+id/radiobutton_Olas"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Olas" />
+
+                <RadioButton
+                    android:id="@+id/radiobutton_Ondas"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Ondas" />
+
+                <RadioButton
+                    android:id="@+id/radiobutton_Rock"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Rock" />
+            </RadioGroup>
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
