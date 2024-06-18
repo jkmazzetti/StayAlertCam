@@ -47,7 +47,13 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import android.media.MediaPlayer
+import android.os.CountDownTimer
+import android.view.Gravity
 import android.widget.FrameLayout
+import android.widget.LinearLayout
+import android.widget.PopupWindow
+import android.widget.TextView
+import android.os.SystemClock
 
 class CameraFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
 
@@ -87,12 +93,28 @@ class CameraFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
     private var count_blink: Int = 0
     private var count_yawn: Int = 0
     private var count_tired: Int = 0
+    private var timeBetweenBlink: Int = 3
+    private val EAR_THRESH = 0.8
+    private val EAR_CONSEC_FRAMES = 3
+    private val BLINK_DURATION_THRESHOLD = 100 // Duración mínima entre parpadeos en milisegundos
+    private var COUNTER = 0
+    private var TOTAL_BLINKS = 0
+    private var lastBlinkTime = SystemClock.elapsedRealtime()
 
     private var isPopupShowing = false
     private var canShowPopup = true
     private var mediaPlayer: MediaPlayer? = null
 
     private var tripStarted = false
+
+    private var chronometerStarted = false
+    private var timeElapsed: Long = 0
+    private lateinit var handler: Handler
+    private var runnable: Runnable? = null
+    private var startTime: Long = 0
+
+    private var popupWindow: PopupWindow? = null
+
 
 
 
@@ -151,6 +173,28 @@ class CameraFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
         _fragmentCameraBinding =
             FragmentCameraBinding.inflate(inflater, container, false)
 
+        // Inicializar el handler
+        handler = Handler(Looper.getMainLooper())
+
+        // Configurar el listener para el botón de iniciar viaje
+        fragmentCameraBinding.btnStartTrip.setOnClickListener {
+            startTrip()
+        }
+
+        // Configurar los listeners para los botones Play y Pause
+        fragmentCameraBinding.playBtn.setOnClickListener {
+            resumeChronometer()
+        }
+
+        fragmentCameraBinding.pauseBtn.setOnClickListener {
+            pauseChronometer()
+        }
+
+        // Configurar el listener para el botón Stop
+        fragmentCameraBinding.stopBtn.setOnClickListener {
+            showEndPopup()
+        }
+
         return fragmentCameraBinding.root
     }
 
@@ -186,19 +230,140 @@ class CameraFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
 
         val startButton: Button = view.findViewById(R.id.btn_start_trip)
         startButton.setOnClickListener {
-            startTrip(view)
+            startTrip()
             startButton.visibility = View.GONE
         }
     }
 
-    private fun startTrip(view: View){
-        val container_sleep_sing: FrameLayout = view.findViewById(R.id.container_sleep_sing)
-        val container_person_yawn: FrameLayout = view.findViewById(R.id.container_person_yawn)
+    private fun showPausePopup() {
+        // Inflar el layout del popup
+        val inflater = LayoutInflater.from(context)
+        val popupView = inflater.inflate(R.layout.fragment_popup_travel_pause, null)
+
+        // Crear el PopupWindow
+        popupWindow = PopupWindow(popupView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        popupWindow?.isFocusable = true
+
+        // Mostrar el PopupWindow
+        popupWindow?.showAtLocation(fragmentCameraBinding.root, Gravity.CENTER, 0, 0)
+
+        // Manejar los botones del popup
+        val btnResumeTrip = popupView.findViewById<Button>(R.id.hiddenButton_pause)
+
+        btnResumeTrip.setOnClickListener {
+            // Reanudar el cronómetro
+            resumeChronometer()
+            popupWindow?.dismiss()
+        }
+    }
+
+    private fun showEndPopup() {
+
+        runnable?.let { handler.removeCallbacks(it) }
+        timeElapsed = System.currentTimeMillis() - startTime
+        chronometerStarted = false
+        fragmentCameraBinding.playBtn.visibility = View.VISIBLE
+        fragmentCameraBinding.pauseBtn.visibility = View.GONE
+
+        // Inflar el layout del popup
+        val inflater = LayoutInflater.from(context)
+        val popupView = inflater.inflate(R.layout.fragment_popup_travel_end, null)
+
+        // Crear el PopupWindow
+        popupWindow = PopupWindow(popupView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        popupWindow?.isFocusable = true
+
+        // Mostrar el PopupWindow
+        popupWindow?.showAtLocation(fragmentCameraBinding.root, Gravity.CENTER, 0, 0)
+
+        // Manejar los botones del popup
+        val btnEndTrip = popupView.findViewById<Button>(R.id.hiddenButton_end)
+        val btnResumeTrip = popupView.findViewById<Button>(R.id.hiddenButton_continue)
+
+        btnEndTrip.setOnClickListener {
+            // Reanudar el cronómetro
+            stopChronometer()
+            popupWindow?.dismiss()
+        }
+
+        btnResumeTrip.setOnClickListener {
+            // Reanudar el cronómetro
+            resumeChronometer()
+            popupWindow?.dismiss()
+        }
+    }
+
+    private fun startChronometer() {
+        startTime = System.currentTimeMillis()
+        runnable = object : Runnable {
+            override fun run() {
+                val elapsedMillis = System.currentTimeMillis() - startTime
+                updateChronometerText(elapsedMillis)
+                handler.postDelayed(this, 1000)
+            }
+        }
+        handler.post(runnable!!)
+        chronometerStarted = true
+        fragmentCameraBinding.playBtn.visibility = View.GONE
+        fragmentCameraBinding.pauseBtn.visibility = View.VISIBLE
+    }
+
+    private fun pauseChronometer() {
+        runnable?.let { handler.removeCallbacks(it) }
+        timeElapsed = System.currentTimeMillis() - startTime
+        chronometerStarted = false
+        showPausePopup()
+        fragmentCameraBinding.playBtn.visibility = View.VISIBLE
+        fragmentCameraBinding.pauseBtn.visibility = View.GONE
+    }
+
+    fun resumeChronometer() {
+        startTime = System.currentTimeMillis() - timeElapsed
+        handler.post(runnable!!)
+        chronometerStarted = true
+        fragmentCameraBinding.playBtn.visibility = View.GONE
+        fragmentCameraBinding.pauseBtn.visibility = View.VISIBLE
+    }
+
+    private fun stopChronometer() {
+        runnable?.let { handler.removeCallbacks(it) }
+        timeElapsed = 0
+        chronometerStarted = false
+        updateChronometerText(timeElapsed)
+        fragmentCameraBinding.playBtn.visibility = View.VISIBLE
+        fragmentCameraBinding.pauseBtn.visibility = View.GONE
+        fragmentCameraBinding.btnStartTrip.visibility = View.VISIBLE
+        fragmentCameraBinding.btnContainer.visibility = View.GONE
+        fragmentCameraBinding.timerContainer.visibility = View.GONE
+
+        fragmentCameraBinding.containerSleepSing.setBackgroundResource(R.drawable.round_background_desactive)
+        fragmentCameraBinding.containerPersonYawn.setBackgroundResource(R.drawable.round_background_desactive)
+
+        tripStarted = false
+    }
+
+    private fun updateChronometerText(elapsedMillis: Long) {
+        val seconds = (elapsedMillis / 1000) % 60
+        val minutes = (elapsedMillis / 1000) / 60
+        val timeFormatted = String.format("%02d:%02d", minutes, seconds)
+        fragmentCameraBinding.timerText.text = timeFormatted
+    }
+
+    private fun startTrip(){
+
+        fragmentCameraBinding.btnContainer.visibility = View.VISIBLE
+//        fragmentCameraBinding.timerText.visibility = View.VISIBLE
+
+        fragmentCameraBinding.containerSleepSing.setBackgroundResource(R.drawable.round_background_active)
+        fragmentCameraBinding.containerPersonYawn.setBackgroundResource(R.drawable.round_background_active)
+
+        fragmentCameraBinding.btnStartTrip.visibility = View.GONE
+
+        fragmentCameraBinding.timerContainer.visibility = View.VISIBLE
 
         tripStarted = true
 
-        container_sleep_sing.setBackgroundResource(R.drawable.round_background_active)
-        container_person_yawn.setBackgroundResource(R.drawable.round_background_active)
+        startChronometer()
     }
     private fun startPopupCooldown() {
         canShowPopup = false
@@ -468,7 +633,7 @@ class CameraFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
             fragmentCameraBinding.viewFinder.display.rotation
     }
 
-    private fun isTiredGestureDetected(resultBundle: FaceLandmarkerHelper.ResultBundle, containerPersonYawn: View, containerSleepSing: View) {
+    private fun isTiredGestureDetected(resultBundle: FaceLandmarkerHelper.ResultBundle) {
 //        println("resultBundle ${resultBundle.result.faceLandmarks().get(0).get(386).y()}")
 
         reference_point1 = resultBundle.result.faceLandmarks().get(0).get(5).y()*1920f
@@ -488,25 +653,45 @@ class CameraFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
 
         ratio_mouth  = (mouth_bottom_point - mouth_top_point) / (reference_point2 - reference_point1)
 
+        val currentTime = SystemClock.elapsedRealtime()
 
-        if(ratio_left_eye < 0.8 && ratio_right_eye < 0.8){
+        if (ratio_left_eye < EAR_THRESH && ratio_right_eye < EAR_THRESH) {
+            COUNTER++
+        } else {
+            if (COUNTER >= EAR_CONSEC_FRAMES) {
+                val blinkDuration = currentTime - lastBlinkTime
+                if (blinkDuration > BLINK_DURATION_THRESHOLD) {
+                    TOTAL_BLINKS++
+                    lastBlinkTime = currentTime
+                    println("Fatiga PARPADEO  $ratio_right_eye")
+                    count_blink++
+                    count_tired++
+                    fragmentCameraBinding.containerPersonYawn.setBackgroundResource(R.drawable.round_background_warning)
+                }
+            }
+            COUNTER = 0
+        }
+
+        if(ratio_left_eye < 0.8 && ratio_right_eye < 0.8 && chronometerStarted){
             println("Fatiga PARPADEO  ${ratio_left_eye}")
             count_blink += 1
             count_tired += 1
+            fragmentCameraBinding.containerSleepSing.setBackgroundResource(R.drawable.round_background_warning)
         }
 
-        if(ratio_mouth > 7){
+        if(ratio_mouth > 7 && chronometerStarted){
             println("Fatiga bostezo  ${ratio_mouth}")
             count_yawn += 1
             count_tired += 1
+            fragmentCameraBinding.containerPersonYawn.setBackgroundResource(R.drawable.round_background_warning)
         }
         println("Fatiga count_tired  ${count_tired}")
 
 
         if(count_tired > 15){
             showGesturePopup()
-            containerPersonYawn.setBackgroundResource(R.drawable.round_background_warning)
-            containerSleepSing.setBackgroundResource(R.drawable.round_background_warning)
+            fragmentCameraBinding.containerPersonYawn.setBackgroundResource(R.drawable.round_background_warning)
+            fragmentCameraBinding.containerSleepSing.setBackgroundResource(R.drawable.round_background_warning)
         }
     }
 
@@ -521,34 +706,7 @@ class CameraFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
         }
         activity?.runOnUiThread {
             if (_fragmentCameraBinding != null) {
-//                if (fragmentCameraBinding.recyclerviewResults.scrollState != SCROLL_STATE_DRAGGING) {
-//                    faceBlendshapesResultAdapter.updateResults(resultBundle.result)
-//                    faceBlendshapesResultAdapter.notifyDataSetChanged()
-//                }
-
-
-//                fragmentCameraBinding.bottomSheetLayout.inferenceTimeVal.text =
-//                    String.format("%d ms", resultBundle.inferenceTime)
-
-                // Pass necessary information to OverlayView for drawing on the canvas
-//                fragmentCameraBinding.overlay.setResults(
-////                    ,
-//                    resultBundle.result,
-//                    resultBundle.inputImageHeight,
-//                    resultBundle.inputImageWidth,
-//                    RunningMode.LIVE_STREAM
-//                )
-//                popup_tired.findById(popup_tired)
-//                fragmentCameraBinding.overlay.getMessage()
-                // Force a redraw
-//                fragmentCameraBinding.overlay.invalidate()
-
-                val containerPersonYawn: FrameLayout = _fragmentCameraBinding!!.containerPersonYawn
-
-                val containerSleepSing: FrameLayout = _fragmentCameraBinding!!.containerSleepSing
-
-
-                isTiredGestureDetected(resultBundle, containerPersonYawn, containerSleepSing)
+                isTiredGestureDetected(resultBundle)
             }
         }
     }
