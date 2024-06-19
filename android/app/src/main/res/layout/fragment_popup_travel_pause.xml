@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/popup_pause"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:backgroundTint="@color/bottom_sheet_text_color"
+    app:cardElevation="10dp"
+    app:cardCornerRadius="16dp" >
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/popup_pause_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="25dp"
+            android:layout_marginTop="25dp"
+            android:layout_marginRight="25dp"
+            android:fontFamily="sans-serif-black"
+            android:gravity="center"
+            android:text="Viaje en pausa"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="280dp"
+            android:layout_height="78dp"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:text="Recomendamos estirar las piernas y descansar durante un periodo no menor a 15 minutos"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="@+id/popup_pause_text"
+            app:layout_constraintStart_toStartOf="@+id/popup_pause_text"
+            app:layout_constraintTop_toBottomOf="@+id/popup_pause_text" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="32dp"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView">
+
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/hiddenButton_pause"
+                android:layout_width="241dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:backgroundTint="@color/nav_item_selected"
+                android:fontFamily="sans-serif-black"
+                android:padding="12dp"
+                android:text="Reanudar"
+                android:textAllCaps="false"
+                android:textColor="@color/bottom_sheet_text_color"
+                android:textSize="18sp"
+                app:strokeColor="@color/white_stayalert"
+                app:strokeWidth="2dp"
+                tools:layout_editor_absoluteX="163dp"
+                tools:layout_editor_absoluteY="207dp"
+                app:cardCornerRadius="16dp"/>
+
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>
