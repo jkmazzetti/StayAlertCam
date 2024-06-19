@@ -53,7 +53,6 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.TextView
-import android.os.SystemClock
 
 class CameraFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
 
@@ -94,12 +93,6 @@ class CameraFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
     private var count_yawn: Int = 0
     private var count_tired: Int = 0
     private var timeBetweenBlink: Int = 3
-    private val EAR_THRESH = 0.8
-    private val EAR_CONSEC_FRAMES = 3
-    private val BLINK_DURATION_THRESHOLD = 100 // Duración mínima entre parpadeos en milisegundos
-    private var COUNTER = 0
-    private var TOTAL_BLINKS = 0
-    private var lastBlinkTime = SystemClock.elapsedRealtime()
 
     private var isPopupShowing = false
     private var canShowPopup = true
@@ -155,14 +148,18 @@ class CameraFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
     }
 
     override fun onDestroyView() {
-        _fragmentCameraBinding = null
+        if(chronometerStarted) {
+            stopChronometer()
+        }
         super.onDestroyView()
-
-        // Shut down our background executor
         backgroundExecutor.shutdown()
-        backgroundExecutor.awaitTermination(
-            Long.MAX_VALUE, TimeUnit.NANOSECONDS
-        )
+        try {
+            backgroundExecutor.awaitTermination(1, TimeUnit.SECONDS)
+        } catch (e: InterruptedException) {
+            Log.e(TAG, "Executor shutdown interrupted", e)
+            Thread.currentThread().interrupt()
+        }
+
     }
 
     override fun onCreateView(
@@ -635,6 +632,9 @@ class CameraFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
 
     private fun isTiredGestureDetected(resultBundle: FaceLandmarkerHelper.ResultBundle) {
 //        println("resultBundle ${resultBundle.result.faceLandmarks().get(0).get(386).y()}")
+//        if (_fragmentCameraBinding == null) {
+//            return  // Asegurarse de que la vista esté aún disponible
+//        }
 
         reference_point1 = resultBundle.result.faceLandmarks().get(0).get(5).y()*1920f
         reference_point2 = resultBundle.result.faceLandmarks().get(0).get(4).y()*1920f
@@ -653,24 +653,7 @@ class CameraFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
 
         ratio_mouth  = (mouth_bottom_point - mouth_top_point) / (reference_point2 - reference_point1)
 
-        val currentTime = SystemClock.elapsedRealtime()
-
-        if (ratio_left_eye < EAR_THRESH && ratio_right_eye < EAR_THRESH) {
-            COUNTER++
-        } else {
-            if (COUNTER >= EAR_CONSEC_FRAMES) {
-                val blinkDuration = currentTime - lastBlinkTime
-                if (blinkDuration > BLINK_DURATION_THRESHOLD) {
-                    TOTAL_BLINKS++
-                    lastBlinkTime = currentTime
-                    println("Fatiga PARPADEO  $ratio_right_eye")
-                    count_blink++
-                    count_tired++
-                    fragmentCameraBinding.containerPersonYawn.setBackgroundResource(R.drawable.round_background_warning)
-                }
-            }
-            COUNTER = 0
-        }
+        timeBetweenBlink
 
         if(ratio_left_eye < 0.8 && ratio_right_eye < 0.8 && chronometerStarted){
             println("Fatiga PARPADEO  ${ratio_left_eye}")
@@ -706,6 +689,33 @@ class CameraFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
         }
         activity?.runOnUiThread {
             if (_fragmentCameraBinding != null) {
+//                if (fragmentCameraBinding.recyclerviewResults.scrollState != SCROLL_STATE_DRAGGING) {
+//                    faceBlendshapesResultAdapter.updateResults(resultBundle.result)
+//                    faceBlendshapesResultAdapter.notifyDataSetChanged()
+//                }
+
+
+//                fragmentCameraBinding.bottomSheetLayout.inferenceTimeVal.text =
+//                    String.format("%d ms", resultBundle.inferenceTime)
+
+                // Pass necessary information to OverlayView for drawing on the canvas
+//                fragmentCameraBinding.overlay.setResults(
+////                    ,
+//                    resultBundle.result,
+//                    resultBundle.inputImageHeight,
+//                    resultBundle.inputImageWidth,
+//                    RunningMode.LIVE_STREAM
+//                )
+//                popup_tired.findById(popup_tired)
+//                fragmentCameraBinding.overlay.getMessage()
+                // Force a redraw
+//                fragmentCameraBinding.overlay.invalidate()
+
+//                val containerPersonYawn: FrameLayout = _fragmentCameraBinding!!.containerPersonYawn
+//
+//                val containerSleepSing: FrameLayout = _fragmentCameraBinding!!.containerSleepSing
+
+
                 isTiredGestureDetected(resultBundle)
             }
         }
