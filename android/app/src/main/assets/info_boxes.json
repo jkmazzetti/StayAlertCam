@@ -5,18 +5,33 @@
     "description": "El viaje duró un total de 8:30 horas."
   },
   {
-    "info": "7:15",
-    "title": "Horas de viaje totales",
-    "description": "El viaje duró un total de 7:15 horas."
+    "info": "5",
+    "title": "Cantidad de alertas recibidas de fatiga",
+    "description": "Se recibieron 5 alertas de fatiga."
   },
   {
-    "info": "9:45",
-    "title": "Horas de viaje totales",
-    "description": "El viaje duró un total de 9:45 horas."
+    "info": "2",
+    "title": "Cantidad de alertas recibidas de somnolencia",
+    "description": "Se recibieron 2 alertas de somnolencia."
   },
   {
-    "info": "6:30",
-    "title": "Horas de viaje totales",
-    "description": "El viaje duró un total de 6:30 horas."
+    "info": "1",
+    "title": "Cantidad de descansos al ser alertado",
+    "description": "Se tomó 1 descanso al ser alertado."
+  },
+  {
+    "info": "3",
+    "title": "Cantidad de descansos totales",
+    "description": "Se registraron 3 descansos durante el viaje."
+  },
+  {
+    "info": "60",
+    "title": "Minutos totales de descanso",
+    "description": "Se registraron 60 minutos de descanso durante el viaje."
+  },
+  {
+    "info": "20",
+    "title": "Minutos promedio por descanso",
+    "description": "Recomendamos que los descansos tengan un minimo de 15 minutos de duración."
   }
 ]
