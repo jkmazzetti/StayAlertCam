@@ -18,7 +18,9 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="42dp"
-            android:orientation="horizontal"></LinearLayout>
+            android:orientation="horizontal">
+
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -38,7 +40,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="19dp"
             android:orientation="horizontal"></LinearLayout>
 
         <LinearLayout
@@ -80,7 +82,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="26dp"
+            android:layout_height="15dp"
             android:orientation="horizontal"></LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
@@ -103,7 +105,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="276dp"
+            android:layout_height="304dp"
             android:orientation="horizontal">
 
             <View
@@ -113,48 +115,55 @@
 
             <RadioGroup
                 android:layout_width="match_parent"
-                android:layout_height="276dp">
+                android:layout_height="match_parent">
 
                 <RadioButton
                     android:id="@+id/radiobutton_Radar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:text="Radar (Predeterminado)" />
 
                 <RadioButton
                     android:id="@+id/radiobutton_Animo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:text="Animo" />
 
                 <RadioButton
                     android:id="@+id/radiobutton_Destello"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:text="Destello" />
 
                 <RadioButton
                     android:id="@+id/radiobutton_Estrellas"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:text="Estrellas" />
 
                 <RadioButton
                     android:id="@+id/radiobutton_Olas"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:text="Olas" />
 
                 <RadioButton
                     android:id="@+id/radiobutton_Ondas"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:text="Ondas" />
 
                 <RadioButton
                     android:id="@+id/radiobutton_Rock"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:text="Rock" />
             </RadioGroup>
         </LinearLayout>
@@ -165,7 +174,7 @@
             android:orientation="vertical">
 
             <Button
-                android:id="@+id/btn_confirmar_notif"
+                android:id="@+id/btn_agregar_contacto"
                 android:layout_width="363dp"
                 android:layout_height="wrap_content"
                 android:background="@color/stay_alert_primary"
