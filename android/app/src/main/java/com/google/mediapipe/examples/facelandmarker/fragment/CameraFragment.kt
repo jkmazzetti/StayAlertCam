@@ -53,6 +53,8 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.TextView
+import android.os.SystemClock
+import kotlinx.coroutines.*
 
 class CameraFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
 
@@ -78,24 +80,54 @@ class CameraFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
     private var cameraFacing = CameraSelector.LENS_FACING_FRONT
 
 
-    private var reference_point1: Float = 0f
-    private var reference_point2: Float = 0f
-    private var left_eye_bottom_point: Float = 0f
-    private var left_eye_top_point: Float = 0f
-    private var right_eye_bottom_point: Float = 0f
-    private var right_eye_top_point: Float = 0f
-    private var mouth_bottom_point: Float = 0f
-    private var mouth_top_point: Float = 0f
-    private var ratio_left_eye: Float = 0f
-    private var ratio_right_eye: Float = 0f
-    private var ratio_mouth: Float = 0f
-    private var count_blink: Int = 0
-    private var count_yawn: Int = 0
-    private var count_tired: Int = 0
-    private var timeBetweenBlink: Int = 3
+    private var referencePoint1: Float = 0f
+    private var referencePoint2: Float = 0f
+    private var leftEyeBottomPoint: Float = 0f
+    private var leftEyeTopPoint: Float = 0f
+    private var rightEyeBottomPoint: Float = 0f
+    private var rightEyeTopPoint: Float = 0f
+    private var mouthBottomPoint: Float = 0f
+    private var mouthTopPoint: Float = 0f
+    private var ratioLeftEye: Float = 0f
+    private var ratioRightEye: Float = 0f
+    private var ratioMouth: Float = 0f
+    private var countBlink: Int = 0
+    private var countYawn: Int = 0
+    private var countTired: Int = 0
+    private val EAR_THRESH = 0.7
+    private val EAR_CONSEC_FRAMES = 3
+    private val BLINK_DURATION_THRESHOLD = 100 // Duración mínima entre parpadeos en milisegundos
+    private var lastYawnTime = SystemClock.elapsedRealtime()
+    private val YAWN_DURATION_THRESHOLD = 6000 // Duración mínima para contar un bostezo en milisegundos (6 segundos)
+    private var lastLongBlinkTime = SystemClock.elapsedRealtime()
+    private val LONG_BLINK_DURATION_THRESHOLD = 5000 // Duración mínima para contar un parpadeo largo en milisegundos (5 segundos)
+    private var countLongBlink = 0
+
+    private val ventanaParpadeos = mutableListOf<Pair<Long, Long>>() // Lista para almacenar tiempos de parpadeo y su duración
+    private val ventanaBostezos = mutableListOf<Long>() // Lista para almacenar tiempos de bostezos
+    private val umbralFatigaParpadeosAlto = 30 // Parpadeos por minuto (alto)
+    private val umbralFatigaParpadeosBajo = 10 // Parpadeos por minuto (bajo)
+    private val umbralDuracionParpadeo = 100 // Duración de parpadeo en milisegundos
+    private val umbralFatigaBostezos = 3 // Bostezos por minuto
+    private val ventanaTiempo = 60 * 1000 // Ventana de tiempo en milisegundos (1 minuto)
+    private var parpadeoEnProgreso = false
+    private var bostezoEnProgreso = false
+    private var inicioParpadeo = 0L
+    private var inicioBostezo = 0L
+    private var isDuracionPromedioParpadeo = false
+
+    // Intervalo mínimo de tiempo entre evaluaciones en milisegundos
+    private val intervaloEvaluacion = 3000 // 1 segundo
+    private var ultimaEvaluacion = 0L
+
+    private var COUNTER = 0
+    private var TOTAL_BLINKS = 0
+    private var lastBlinkTime = SystemClock.elapsedRealtime()
 
     private var isPopupShowing = false
-    private var canShowPopup = true
+    private var canShowPopupWarning = true
+    private var canShowPopupDanger = true
+    private var canShowPopupCritical = true
     private var mediaPlayer: MediaPlayer? = null
 
     private var tripStarted = false
@@ -105,10 +137,14 @@ class CameraFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
     private lateinit var handler: Handler
     private var runnable: Runnable? = null
     private var startTime: Long = 0
+    private lateinit var pauseHandler: Handler
+    private var pauseRunnable: Runnable? = null
 
     private var popupWindow: PopupWindow? = null
 
-
+    private fun obtenerTiempoActual(): Long {
+        return System.currentTimeMillis()
+    }
 
 
     /** Blocking ML operations are performed using this executor */
@@ -151,6 +187,8 @@ class CameraFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
         if(chronometerStarted) {
             stopChronometer()
         }
+        canShowPopupWarning = true
+        canShowPopupDanger = true
         super.onDestroyView()
         backgroundExecutor.shutdown()
         try {
@@ -159,7 +197,6 @@ class CameraFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
             Log.e(TAG, "Executor shutdown interrupted", e)
             Thread.currentThread().interrupt()
         }
-
     }
 
     override fun onCreateView(
@@ -172,6 +209,7 @@ class CameraFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
 
         // Inicializar el handler
         handler = Handler(Looper.getMainLooper())
+        pauseHandler = Handler(Looper.getMainLooper())  // Initialize the pauseHandler
 
         // Configurar el listener para el botón de iniciar viaje
         fragmentCameraBinding.btnStartTrip.setOnClickListener {
@@ -306,12 +344,20 @@ class CameraFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
     }
 
     private fun pauseChronometer() {
+        println("pauso el viaje")
         runnable?.let { handler.removeCallbacks(it) }
         timeElapsed = System.currentTimeMillis() - startTime
         chronometerStarted = false
         showPausePopup()
         fragmentCameraBinding.playBtn.visibility = View.VISIBLE
         fragmentCameraBinding.pauseBtn.visibility = View.GONE
+
+        // Iniciar el Runnable para verificar los 15 minutos
+        pauseRunnable = Runnable {
+            fragmentCameraBinding.containerSleepSing.setBackgroundResource(R.drawable.round_background_active)
+            fragmentCameraBinding.containerPersonYawn.setBackgroundResource(R.drawable.round_background_active)
+        }
+        pauseHandler.postDelayed(pauseRunnable!!, 15 * 60 * 1000)  // 15 minutos en milisegundos
     }
 
     fun resumeChronometer() {
@@ -320,6 +366,9 @@ class CameraFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
         chronometerStarted = true
         fragmentCameraBinding.playBtn.visibility = View.GONE
         fragmentCameraBinding.pauseBtn.visibility = View.VISIBLE
+
+        // Cancelar el Runnable si se reanuda antes de los 15 minutos
+        pauseRunnable?.let { pauseHandler.removeCallbacks(it) }
     }
 
     private fun stopChronometer() {
@@ -337,6 +386,9 @@ class CameraFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
         fragmentCameraBinding.containerPersonYawn.setBackgroundResource(R.drawable.round_background_desactive)
 
         tripStarted = false
+
+        // Cancelar el Runnable si se reanuda antes de los 15 minutos
+        pauseRunnable?.let { pauseHandler.removeCallbacks(it) }
     }
 
     private fun updateChronometerText(elapsedMillis: Long) {
@@ -362,11 +414,25 @@ class CameraFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
 
         startChronometer()
     }
-    private fun startPopupCooldown() {
-        canShowPopup = false
-        Handler(Looper.getMainLooper()).postDelayed({
-            canShowPopup = true
-        }, 30000) // 30,000 ms = 30 segundos
+    private fun startPopupCooldown(type_popup: String) {
+        if(type_popup === "warning") {
+            canShowPopupWarning = false
+            Handler(Looper.getMainLooper()).postDelayed({
+                canShowPopupWarning = true
+            }, 30000) // 30,000 ms = 30 segundos
+        }
+        if (type_popup === "danger"){
+            canShowPopupDanger = false
+            Handler(Looper.getMainLooper()).postDelayed({
+                canShowPopupDanger = true
+            }, 30000) // 30,000 ms = 30 segundos
+        }
+        if (type_popup === "critical"){
+            canShowPopupCritical = false
+            Handler(Looper.getMainLooper()).postDelayed({
+                canShowPopupCritical = true
+            }, 30000) // 30,000 ms = 30 segundos
+        }
     }
 
     private fun playAlertSound() {
@@ -390,8 +456,8 @@ class CameraFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
         mediaPlayer?.release()
         mediaPlayer = null
     }
-    private fun showGesturePopup() {
-        if (isPopupShowing || !canShowPopup) return
+    private fun showGesturePopupWarning() {
+        if (isPopupShowing || !canShowPopupWarning) return
 
         isPopupShowing = true
         activity?.let {
@@ -405,7 +471,7 @@ class CameraFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
                 alertDialog.dismiss()
                 stopAlertSound()
                 isPopupShowing = false
-                startPopupCooldown()
+                startPopupCooldown("warning")
             }
             alertDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
             alertDialog.show()
@@ -414,8 +480,84 @@ class CameraFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
         }
     }
 
+    private fun showGesturePopupDanger() {
+        if (isPopupShowing || !canShowPopupDanger) return
 
-    private fun initBottomSheetControls() {
+        isPopupShowing = true
+        activity?.let {
+            val builder = AlertDialog.Builder(it)
+            val inflater = requireActivity().layoutInflater
+            val dialogView = inflater.inflate(R.layout.fragment_popup_sleep, null)
+            builder.setView(dialogView)
+            val alertDialog = builder.create()
+            val hiddenButton: Button = dialogView.findViewById(R.id.hiddenButton)
+            hiddenButton.setOnClickListener {
+                alertDialog.dismiss()
+                stopAlertSound()
+                isPopupShowing = false
+                startPopupCooldown("danger")
+            }
+            alertDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+            alertDialog.show()
+
+            playAlertSound()
+
+            // Handler para el dismiss automático y llamada a showGesturePopupCritical después de 5 segundos
+            Handler(Looper.getMainLooper()).postDelayed({
+                if (alertDialog.isShowing) {
+                    alertDialog.dismiss()
+                    stopAlertSound()
+                    isPopupShowing = false
+                    showGesturePopupCritical()
+                }
+            }, 5000) // 5000 milisegundos = 5 segundos
+        }
+    }
+
+    private fun showGesturePopupCritical() {
+        if (isPopupShowing || !canShowPopupCritical) return
+
+        isPopupShowing = true
+        activity?.let {
+            val builder = AlertDialog.Builder(it)
+            val inflater = requireActivity().layoutInflater
+            val dialogView = inflater.inflate(R.layout.fragment_popup_critical, null)
+            builder.setView(dialogView)
+            val alertDialog = builder.create()
+            val hiddenButton: Button = dialogView.findViewById(R.id.hiddenButton)
+            val countDown: TextView = dialogView.findViewById(R.id.count_text)
+
+            hiddenButton.setOnClickListener {
+                alertDialog.dismiss()
+                stopAlertSound()
+                isPopupShowing = false
+                startPopupCooldown("critical")
+            }
+
+            alertDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+            alertDialog.show()
+
+            playAlertSound()
+
+            // Iniciar cuenta regresiva de 60 segundos
+            object : CountDownTimer(60000, 1000) {
+                override fun onTick(millisUntilFinished: Long) {
+                    val secondsRemaining = millisUntilFinished / 1000
+                    countDown.text = secondsRemaining.toString()
+                }
+
+                override fun onFinish() {
+                    alertDialog.dismiss()
+                    stopAlertSound()
+                    isPopupShowing = false
+                    startPopupCooldown("critical")
+                }
+            }.start()
+        }
+    }
+
+
+            private fun initBottomSheetControls() {
         // init bottom sheet settings
 //        fragmentCameraBinding.bottomSheetLayout.maxFacesValue.text =
 //            viewModel.currentMaxFaces.toString()
@@ -630,51 +772,154 @@ class CameraFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
             fragmentCameraBinding.viewFinder.display.rotation
     }
 
+    private fun alertarFatigaSomnolencia() {
+        // Implementación de la alerta (puede ser una señal sonora, visual, etc.)
+        println("Alerta: Fatiga o somnolencia detectada")
+    }
+
+    private fun obtenerDuracionParpadeo(): Long {
+        // Implementar la lógica para obtener la duración del parpadeo usando los datos disponibles
+        // Esto es un ejemplo y debe reemplazarse con la lógica real de detección de duración
+        return 400 // Duración del parpadeo en milisegundos
+    }
+
     private fun isTiredGestureDetected(resultBundle: FaceLandmarkerHelper.ResultBundle) {
 //        println("resultBundle ${resultBundle.result.faceLandmarks().get(0).get(386).y()}")
 //        if (_fragmentCameraBinding == null) {
 //            return  // Asegurarse de que la vista esté aún disponible
 //        }
+        val tiempoActual = obtenerTiempoActual()
 
-        reference_point1 = resultBundle.result.faceLandmarks().get(0).get(5).y()*1920f
-        reference_point2 = resultBundle.result.faceLandmarks().get(0).get(4).y()*1920f
+        referencePoint1 = resultBundle.result.faceLandmarks().get(0).get(5).y()*1920f
+        referencePoint2 = resultBundle.result.faceLandmarks().get(0).get(4).y()*1920f
 
-        left_eye_bottom_point = resultBundle.result.faceLandmarks().get(0).get(374).y()*1920f
-        left_eye_top_point = resultBundle.result.faceLandmarks().get(0).get(386).y()*1920f
+        leftEyeBottomPoint = resultBundle.result.faceLandmarks().get(0).get(374).y()*1920f
+        leftEyeTopPoint = resultBundle.result.faceLandmarks().get(0).get(386).y()*1920f
 
-        right_eye_bottom_point = resultBundle.result.faceLandmarks().get(0).get(145).y()*1920f
-        right_eye_top_point = resultBundle.result.faceLandmarks().get(0).get(159).y()*1920f
+        rightEyeBottomPoint = resultBundle.result.faceLandmarks().get(0).get(145).y()*1920f
+        rightEyeTopPoint = resultBundle.result.faceLandmarks().get(0).get(159).y()*1920f
 
-        ratio_left_eye = (left_eye_bottom_point - left_eye_top_point) / (reference_point2 - reference_point1)
-        ratio_right_eye = (right_eye_bottom_point - right_eye_top_point) / (reference_point2 - reference_point1)
+        ratioLeftEye = (leftEyeBottomPoint - leftEyeTopPoint) / (referencePoint2 - referencePoint1)
+        ratioRightEye = (rightEyeBottomPoint - rightEyeTopPoint) / (referencePoint2 - referencePoint1)
 
-        mouth_bottom_point = resultBundle.result.faceLandmarks().get(0).get(17).y()*1920f
-        mouth_top_point = resultBundle.result.faceLandmarks().get(0).get(0).y()*1920f
+        mouthBottomPoint = resultBundle.result.faceLandmarks().get(0).get(17).y()*1920f
+        mouthTopPoint = resultBundle.result.faceLandmarks().get(0).get(0).y()*1920f
 
-        ratio_mouth  = (mouth_bottom_point - mouth_top_point) / (reference_point2 - reference_point1)
+        ratioMouth  = (mouthBottomPoint - mouthTopPoint) / (referencePoint2 - referencePoint1)
 
-        timeBetweenBlink
-
-        if(ratio_left_eye < 0.8 && ratio_right_eye < 0.8 && chronometerStarted){
-            println("Fatiga PARPADEO  ${ratio_left_eye}")
-            count_blink += 1
-            count_tired += 1
-            fragmentCameraBinding.containerSleepSing.setBackgroundResource(R.drawable.round_background_warning)
+        // Detectar parpadeo
+        if (ratioLeftEye < EAR_THRESH && ratioRightEye < EAR_THRESH) {
+            if (!parpadeoEnProgreso) {
+                // Iniciar el registro de un parpadeo
+                parpadeoEnProgreso = true
+                inicioParpadeo = tiempoActual
+            } else {
+                // Verificar si el parpadeo dura más de 2 segundos
+                val duracionParpadeo = tiempoActual - inicioParpadeo
+                if (duracionParpadeo > 2000) {
+                    // Ejecutar las tres líneas de código si el parpadeo dura más de 2 segundos
+                    showGesturePopupDanger()
+                    fragmentCameraBinding.containerPersonYawn.setBackgroundResource(R.drawable.round_background_danger)
+                    fragmentCameraBinding.containerSleepSing.setBackgroundResource(R.drawable.round_background_danger)
+                    countTired = 3
+                }
+            }
+        } else {
+            if (parpadeoEnProgreso) {
+                // Finalizar el registro de un parpadeo
+                val duracionParpadeo = tiempoActual - inicioParpadeo
+                if (duracionParpadeo > umbralDuracionParpadeo) {
+                    ventanaParpadeos.add(Pair(inicioParpadeo, duracionParpadeo))
+                    println("Fatiga PARPADEO $ratioRightEye")
+                }
+                println("Fatiga PARPADEO $ratioRightEye")
+                parpadeoEnProgreso = false
+            }
         }
 
-        if(ratio_mouth > 7 && chronometerStarted){
-            println("Fatiga bostezo  ${ratio_mouth}")
-            count_yawn += 1
-            count_tired += 1
-            fragmentCameraBinding.containerPersonYawn.setBackgroundResource(R.drawable.round_background_warning)
+        // Detectar bostezo
+        if (ratioMouth > 7) {
+            if (!bostezoEnProgreso) {
+                // Iniciar el registro de un bostezoo
+                bostezoEnProgreso = true
+                inicioBostezo = tiempoActual
+            }
+        } else {
+            if (bostezoEnProgreso) {
+                // Finalizar el registro de un bostezo
+                ventanaBostezos.add(tiempoActual)
+                println("Fatiga bostezo $ratioMouth")
+                bostezoEnProgreso = false
+            }
         }
-        println("Fatiga count_tired  ${count_tired}")
+
+        // Eliminar parpadeos fuera de la ventana de tiempo
+        ventanaParpadeos.removeIf { it.first < tiempoActual - ventanaTiempo }
+
+        // Eliminar bostezos fuera de la ventana de tiempo
+        ventanaBostezos.removeIf { it < tiempoActual - ventanaTiempo }
+
+        val cantidadParpadeos = ventanaParpadeos.size
+        val cantidadBostezos = ventanaBostezos.size
+        val duracionPromedioParpadeo = if (cantidadParpadeos > 0) ventanaParpadeos.sumOf { it.second } / cantidadParpadeos else 0
+
+        println("Fatiga total parpadeos 1 ${ventanaParpadeos.size}")
+        println("Fatiga total final parpadeos ${ventanaParpadeos.size}, - countTired 1 $countTired, -  duracionPromedioParpadeo 1 $duracionPromedioParpadeo, - cantidadBostezos $cantidadBostezos ")
+        println("Fatiga total bostezos 1 ${ventanaBostezos.size}")
+        println("Fatiga countTired 1 $countTired ")
+        println("ventanaTiempo $ventanaTiempo ")
+        println("ventanaParpadeos $ventanaParpadeos ")
+
+        //println("ventanaParpadeos.first().first ${ventanaParpadeos.first().first} ")
+
+        // Solo evaluar signos de fatiga si ha pasado al menos `ventanaTiempo` milisegundos desde el inicio
+        if (tiempoActual - startTime >= ventanaTiempo) {
+
+            // Verificar si ha pasado el intervalo mínimo desde la última evaluación
+
+                println("Entro aqui la concha de la lora ")
+
+                val cantidadParpadeos = ventanaParpadeos.size
+                val cantidadBostezos = ventanaBostezos.size
+                val duracionPromedioParpadeo = if (cantidadParpadeos > 0) ventanaParpadeos.sumOf { it.second } / cantidadParpadeos else 0
+
+            if (tiempoActual - ultimaEvaluacion >= intervaloEvaluacion) {
+                ultimaEvaluacion = tiempoActual
+                println("Fatiga duracionPromedioParpadeo 1 $duracionPromedioParpadeo ")
+                // Verificar si hay signos de fatiga o somnolencia
+                if (cantidadParpadeos > umbralFatigaParpadeosAlto || cantidadParpadeos < umbralFatigaParpadeosBajo ||
+                    duracionPromedioParpadeo > 400 || cantidadBostezos > umbralFatigaBostezos) {
+                    if(duracionPromedioParpadeo > 400 && !isDuracionPromedioParpadeo){
+                        isDuracionPromedioParpadeo = true
+                        countTired++
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            isDuracionPromedioParpadeo = false
+                        }, 40000)
+                    } else if(cantidadParpadeos > umbralFatigaParpadeosAlto || cantidadParpadeos < umbralFatigaParpadeosBajo || cantidadBostezos > umbralFatigaBostezos){
+                        countTired++
+                    }
+
+                } else {
+                    countTired = 0 // Resetear el contador si no hay signos de fatiga
+                }
 
 
-        if(count_tired > 15){
-            showGesturePopup()
-            fragmentCameraBinding.containerPersonYawn.setBackgroundResource(R.drawable.round_background_warning)
-            fragmentCameraBinding.containerSleepSing.setBackgroundResource(R.drawable.round_background_warning)
+                // Mostrar alertas según el conteo de fatiga
+                if (countTired === 1) {
+                    showGesturePopupWarning()
+                    fragmentCameraBinding.containerPersonYawn.setBackgroundResource(R.drawable.round_background_warning)
+                }
+                if (countTired === 2) {
+                    showGesturePopupWarning()
+                    fragmentCameraBinding.containerSleepSing.setBackgroundResource(R.drawable.round_background_warning)
+                }
+
+                if (countTired >= 3) {
+                    showGesturePopupDanger()
+                    fragmentCameraBinding.containerPersonYawn.setBackgroundResource(R.drawable.round_background_danger)
+                    fragmentCameraBinding.containerSleepSing.setBackgroundResource(R.drawable.round_background_danger)
+                }
+            }
         }
     }
 
@@ -688,45 +933,29 @@ class CameraFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
             return  // Si tripStarted es falso, salir sin hacer nada
         }
         activity?.runOnUiThread {
+            println("resultBundle ------> $resultBundle")
+
             if (_fragmentCameraBinding != null) {
-//                if (fragmentCameraBinding.recyclerviewResults.scrollState != SCROLL_STATE_DRAGGING) {
-//                    faceBlendshapesResultAdapter.updateResults(resultBundle.result)
-//                    faceBlendshapesResultAdapter.notifyDataSetChanged()
-//                }
-
-
-//                fragmentCameraBinding.bottomSheetLayout.inferenceTimeVal.text =
-//                    String.format("%d ms", resultBundle.inferenceTime)
 
                 // Pass necessary information to OverlayView for drawing on the canvas
-//                fragmentCameraBinding.overlay.setResults(
-////                    ,
-//                    resultBundle.result,
-//                    resultBundle.inputImageHeight,
-//                    resultBundle.inputImageWidth,
-//                    RunningMode.LIVE_STREAM
-//                )
-//                popup_tired.findById(popup_tired)
-//                fragmentCameraBinding.overlay.getMessage()
-                // Force a redraw
-//                fragmentCameraBinding.overlay.invalidate()
-
-//                val containerPersonYawn: FrameLayout = _fragmentCameraBinding!!.containerPersonYawn
-//
-//                val containerSleepSing: FrameLayout = _fragmentCameraBinding!!.containerSleepSing
-
-
+                fragmentCameraBinding.overlay.setResults(
+                    resultBundle.result,
+                    resultBundle.inputImageHeight,
+                    resultBundle.inputImageWidth,
+                    RunningMode.LIVE_STREAM
+                )
                 isTiredGestureDetected(resultBundle)
+                fragmentCameraBinding.overlay.invalidate()
             }
         }
     }
 
     override fun onEmpty() {
-//        fragmentCameraBinding.overlay.clear()
-//        activity?.runOnUiThread {
-//            faceBlendshapesResultAdapter.updateResults(null)
-//            faceBlendshapesResultAdapter.notifyDataSetChanged()
-//        }
+        fragmentCameraBinding.overlay.clear()
+        activity?.runOnUiThread {
+            faceBlendshapesResultAdapter.updateResults(null)
+            faceBlendshapesResultAdapter.notifyDataSetChanged()
+        }
     }
 
     override fun onError(error: String, errorCode: Int) {

@@ -32,22 +32,23 @@
             android:layout_marginTop="25dp"
             android:layout_marginRight="25dp"
             android:fontFamily="sans-serif-black"
-            android:text="En los últimos 10 minutos, presentó 10 signos que indican que se esta quedando dormido"
+            android:text="Se esta quedando dormido."
             android:gravity="center"
             android:textColor="@color/black"
-            android:textSize="16sp"
+            android:textSize="23sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
         <TextView
             android:id="@+id/textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="217dp"
+            android:layout_height="57dp"
             android:layout_marginTop="10dp"
             android:text="Haga una parada urgentemente"
+            android:gravity="center"
             android:textColor="@color/black"
-            android:textSize="16sp"
+            android:textSize="23sp"
             app:layout_constraintEnd_toEndOf="@+id/popup_sleep_text"
             app:layout_constraintStart_toStartOf="@+id/popup_sleep_text"
             app:layout_constraintTop_toBottomOf="@+id/popup_sleep_text" />
