@@ -1,43 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@color/white_stayalert"
+    android:orientation="vertical"
     tools:context=".StatisticsFragment">
 
-    <!-- Primer LinearLayout -->
+    <!-- Header Section -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/stay_alert_primary"
-        android:paddingBottom="15dp"
+        android:orientation="vertical"
         android:paddingTop="15dp"
-        android:orientation="vertical">
+        android:paddingBottom="15dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="Estadisticas"
+            android:text="Estadísticas"
             android:textColor="@color/white_stayalert"
-            android:textSize="32sp"/>
+            android:textSize="32sp" />
 
         <ImageView
             android:layout_width="150dp"
             android:layout_height="150dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="10dp"
-            android:src="@drawable/ricardo_img"
             android:background="@drawable/circular_image"
+            android:clipToOutline="true"
             android:scaleType="centerCrop"
-            android:clipToOutline="true" />
-
-
+            android:src="@drawable/ricardo_img" />
     </LinearLayout>
 
-    <!-- Segundo LinearLayout -->
+    <!-- User Name Section -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -47,15 +46,14 @@
         android:paddingTop="15dp">
 
         <TextView
-            android:textColor="#1E1E1E"
-            android:textSize="30sp"
-            android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            android:text="Ricardo Martinez" />
-
+            android:layout_height="wrap_content"
+            android:text="Ricardo Martinez"
+            android:textColor="#1E1E1E"
+            android:textSize="30sp" />
     </LinearLayout>
 
-    <!-- Tercer LinearLayout -->
+    <!-- Button Section -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -65,44 +63,22 @@
         android:paddingTop="15dp"
         android:paddingBottom="15dp">
 
-        <!-- Para la próxima poner el botón de histórico -->
-        <com.google.android.material.button.MaterialButton
-            android:backgroundTint="@android:color/transparent"
-            android:background="@drawable/button_circular"
+        <com.google.mediapipe.examples.facelandmarker.CustomButton
             android:layout_width="180dp"
             android:layout_height="wrap_content"
-            android:text="Ultimo Viaje"
-            android:textColor="#FF8736"
-            android:textSize="16sp"
+            android:backgroundTint="@color/stay_alert_primary"
             android:padding="10dp"
-            android:fontFamily="sans-serif" />
+            app:buttonText="ULTIMO VIAJE" />
 
-
-    </LinearLayout>
-
-    <!-- Cuarta Seccion LinearLayout 4 + Scroll -->
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white_stayalert"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:paddingTop="15dp"
-        android:paddingBottom="15dp">
-
-        <TextView
-            android:id="@+id/rkki7b3zxi9"
-            android:textColor="#1E1E1E"
-            android:textSize="16sp"
+        <com.google.mediapipe.examples.facelandmarker.CustomButton
+            android:layout_width="180dp"
             android:layout_height="wrap_content"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="Viaje realizado a San Rafael, Mendoza\n\n21/05/2024" />
-
+            android:backgroundTint="@color/gray"
+            android:padding="10dp"
+            app:buttonText="HISTORICO" />
     </LinearLayout>
 
+    <!-- Scrollable Info Section -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -115,15 +91,8 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Aca se agregarán dinámicamente las entradas -->
-            <com.google.mediapipe.examples.facelandmarker.InfoBoxView
-                android:id="@+id/infoBoxView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
+            <!-- Aquí se agregarán dinámicamente las entradas -->
         </LinearLayout>
-
-
     </ScrollView>
 
 </LinearLayout>

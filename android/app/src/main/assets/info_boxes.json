@@ -15,11 +15,6 @@
     "description": "Se recibieron 2 alertas de somnolencia."
   },
   {
-    "info": "1",
-    "title": "Cantidad de descansos al ser alertado",
-    "description": "Se tomó 1 descanso al ser alertado."
-  },
-  {
     "info": "3",
     "title": "Cantidad de descansos totales",
     "description": "Se registraron 3 descansos durante el viaje."
