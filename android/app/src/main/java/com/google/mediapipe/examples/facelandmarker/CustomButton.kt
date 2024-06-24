@@ -1,7 +1,7 @@
 package com.google.mediapipe.examples.facelandmarker
 
 import android.content.Context
-import android.graphics.drawable.GradientDrawable
+import android.content.res.ColorStateList
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.ContextCompat
@@ -21,10 +21,7 @@ class CustomButton @JvmOverloads constructor(
         text = buttonText
 
         // Configura el estilo del botón
-        val drawable = GradientDrawable().apply {
-            shape = GradientDrawable.RECTANGLE
-            cornerRadius = 50f
-        }
+        val drawable = ContextCompat.getDrawable(context, R.drawable.rounded_button)
         background = drawable
         setTextColor(ContextCompat.getColor(context, android.R.color.white))
 
@@ -32,6 +29,20 @@ class CustomButton @JvmOverloads constructor(
         textAlignment = TEXT_ALIGNMENT_CENTER
         textSize = 16f
         gravity = android.view.Gravity.CENTER
+
+        // Efecto de cambio de color al presionar
+        val states = arrayOf(
+            intArrayOf(android.R.attr.state_pressed),
+            intArrayOf()
+        )
+
+        val colors = intArrayOf(
+            ContextCompat.getColor(context, R.color.pressed_color),
+            ContextCompat.getColor(context, R.color.default_color)
+        )
+
+        val colorStateList = ColorStateList(states, colors)
+        backgroundTintList = colorStateList
 
         // Libera los recursos de los atributos
         attributes.recycle()

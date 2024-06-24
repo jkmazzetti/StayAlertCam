@@ -1,0 +1,24 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- ACA TENGO QUE CARGAR LA INFORMACION DE TODOS LOS VIAJES -->
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Duración (horas:minutos)"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/tv_duracion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="--:--"
+        android:textSize="18sp" />
+
+    <!-- Add other TextViews similar to above for displaying the rest of the data -->
+
+</LinearLayout>
