@@ -2,7 +2,24 @@
   "viaje": [
     {
       "ID": 1,
-      "Duracion": "10:30",
+      "Duracion": {
+        "horas": 10,
+        "minutos": 30
+      },
+      "CantidadDeAlertasFatiga": 5,
+      "RegistroDeAlertasFatiga": ["00:30", "00:45", "01:15", "02:30", "03:45"],
+      "CantidadDeAlertasSomnolencia": 3,
+      "RegistroDeAlertasSomnolencia": ["01:00", "02:00", "04:00"],
+      "CantidadDeDescansosTotales": 2,
+      "MinutosTotalesDeDescanso": 40,
+      "MinutosPromedioPorDescanso": 20
+    },
+    {
+      "ID": 2,
+      "Duracion": {
+        "horas": 12,
+        "minutos": 30
+      },
       "CantidadDeAlertasFatiga": 5,
       "RegistroDeAlertasFatiga": ["00:30", "00:45", "01:15", "02:30", "03:45"],
       "CantidadDeAlertasSomnolencia": 3,
@@ -10,6 +27,20 @@
       "CantidadDeDescansosTotales": 2,
       "MinutosTotalesDeDescanso": 60,
       "MinutosPromedioPorDescanso": 30
+    },
+    {
+      "ID": 3,
+      "Duracion": {
+        "horas": 8,
+        "minutos": 30
+      },
+      "CantidadDeAlertasFatiga": 3,
+      "RegistroDeAlertasFatiga": ["2:30", "4:45", "05:15"],
+      "CantidadDeAlertasSomnolencia": 4,
+      "RegistroDeAlertasSomnolencia": ["5:00", "06:00", "07:00", "08:00"],
+      "CantidadDeDescansosTotales": 2,
+      "MinutosTotalesDeDescanso": 30,
+      "MinutosPromedioPorDescanso": 15
     }
   ]
 }

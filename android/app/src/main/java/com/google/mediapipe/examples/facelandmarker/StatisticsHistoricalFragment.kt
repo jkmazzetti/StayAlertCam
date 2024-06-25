@@ -20,12 +20,62 @@ class StatisticsHistoricalFragment : Fragment() {
         val jsonString = loadJSONFromAsset("info_boxes.json")
         if (jsonString != null) {
             val jsonObject = JSONObject(jsonString)
-            val viaje = jsonObject.getJSONArray("viaje").getJSONObject(0)
+            val jsonArray = jsonObject.getJSONArray("viaje")
 
-            val duracion: TextView = view.findViewById(R.id.tv_duracion)
-            duracion.text = viaje.getString("Duracion")
+            var totalHoras = 0
+            var totalMinutos = 0
+            var totalViajes = 0
+            var totalAlertasFatiga = 0
+            var totalAlertasSomnolencia = 0
+            var totalDescansos = 0
+            var totalMinutosDescanso = 0
 
-            // CARGAR MAS ASSETS
+            for (i in 0 until jsonArray.length()) {
+                totalViajes += 1
+                val duracionObject = jsonArray.getJSONObject(i).getJSONObject("Duracion")
+                totalHoras += duracionObject.getInt("horas")
+                totalMinutos += duracionObject.getInt("minutos")
+                totalAlertasFatiga += jsonArray.getJSONObject(i).getInt("CantidadDeAlertasFatiga")
+                totalAlertasSomnolencia += jsonArray.getJSONObject(i).getInt("CantidadDeAlertasSomnolencia")
+                totalDescansos += jsonArray.getJSONObject(i).getInt("CantidadDeDescansosTotales")
+                totalMinutosDescanso += jsonArray.getJSONObject(i).getInt("MinutosTotalesDeDescanso")
+            }
+
+            val totalMinutosConvertidos = totalHoras * 60 + totalMinutos
+            val totalHorasCalculadas = totalMinutosConvertidos / 60
+            val totalMinutosRestantes = totalMinutosConvertidos % 60
+
+            val promedioMinutos = totalMinutosConvertidos / jsonArray.length()
+            val promedioHoras = promedioMinutos / 60
+            val promedioMinutosRestantes = promedioMinutos % 60
+
+            val promedioFatiga = totalAlertasFatiga / jsonArray.length()
+            val promedioSomnolencia = totalAlertasSomnolencia / jsonArray.length()
+            val promedioDescansos = totalDescansos / jsonArray.length()
+            val promedioMinutosDescanso = totalMinutosDescanso / jsonArray.length()
+
+
+            val cantidadViajes: TextView = view.findViewById(R.id.tv_totalViajes)
+            cantidadViajes.text = totalViajes.toString()
+
+            val duracionTotal: TextView = view.findViewById(R.id.tv_duracion_total)
+            duracionTotal.text = String.format("%02d:%02d", totalHorasCalculadas, totalMinutosRestantes)
+
+            val duracionPromedio: TextView = view.findViewById(R.id.tv_duracion_promedio)
+            duracionPromedio.text = String.format("%02d:%02d", promedioHoras, promedioMinutosRestantes)
+
+            val fatigaPromedio: TextView = view.findViewById(R.id.tv_promedioFatiga)
+            fatigaPromedio.text = promedioFatiga.toString()
+
+            val somnolenciaPromedio: TextView = view.findViewById(R.id.tv_promedioSomnolencia)
+            somnolenciaPromedio.text = promedioSomnolencia.toString()
+
+            val descansosPromedio: TextView = view.findViewById(R.id.tv_promedioDescansos)
+            descansosPromedio.text = promedioDescansos.toString()
+
+            val minutosDescansoPromedio: TextView = view.findViewById(R.id.tv_promedioMinDescanso)
+            minutosDescansoPromedio.text = promedioMinutosDescanso.toString()
+
         }
 
         return view

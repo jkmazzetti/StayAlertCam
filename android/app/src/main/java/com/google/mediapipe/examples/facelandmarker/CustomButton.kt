@@ -27,7 +27,7 @@ class CustomButton @JvmOverloads constructor(
 
         // Centrar el texto y establecer el tamaño del texto en 16sp
         textAlignment = TEXT_ALIGNMENT_CENTER
-        textSize = 16f
+        textSize = 18f
         gravity = android.view.Gravity.CENTER
 
         // Efecto de cambio de color al presionar

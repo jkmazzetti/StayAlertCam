@@ -18,6 +18,8 @@ class StatisticsFragment : Fragment() {
         val btnViajeActual: Button = view.findViewById(R.id.btn_ultimo_viaje)
         val btnHistorico: Button = view.findViewById(R.id.btn_historico)
 
+        loadFragment(StatisticsHistoricalFragment())
+
         btnViajeActual.setOnClickListener {
             loadFragment(StatisticsLastFragment())
         }
