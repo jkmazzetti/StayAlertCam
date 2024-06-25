@@ -1,37 +1,46 @@
-[
-  {
-    "info": "8:30",
-    "title": "Horas de viaje totales",
-    "description": "El viaje duró un total de 8:30 horas."
-  },
-  {
-    "info": "5",
-    "title": "Cantidad de alertas recibidas de fatiga",
-    "description": "Se recibieron 5 alertas de fatiga."
-  },
-  {
-    "info": "2",
-    "title": "Cantidad de alertas recibidas de somnolencia",
-    "description": "Se recibieron 2 alertas de somnolencia."
-  },
-  {
-    "info": "1",
-    "title": "Cantidad de descansos al ser alertado",
-    "description": "Se tomó 1 descanso al ser alertado."
-  },
-  {
-    "info": "3",
-    "title": "Cantidad de descansos totales",
-    "description": "Se registraron 3 descansos durante el viaje."
-  },
-  {
-    "info": "60",
-    "title": "Minutos totales de descanso",
-    "description": "Se registraron 60 minutos de descanso durante el viaje."
-  },
-  {
-    "info": "20",
-    "title": "Minutos promedio por descanso",
-    "description": "Recomendamos que los descansos tengan un minimo de 15 minutos de duración."
-  }
-]
+{
+  "viaje": [
+    {
+      "ID": 1,
+      "Duracion": {
+        "horas": 10,
+        "minutos": 30
+      },
+      "CantidadDeAlertasFatiga": 5,
+      "RegistroDeAlertasFatiga": ["00:30", "00:45", "01:15", "02:30", "03:45"],
+      "CantidadDeAlertasSomnolencia": 3,
+      "RegistroDeAlertasSomnolencia": ["01:00", "02:00", "04:00"],
+      "CantidadDeDescansosTotales": 2,
+      "MinutosTotalesDeDescanso": 40,
+      "MinutosPromedioPorDescanso": 20
+    },
+    {
+      "ID": 2,
+      "Duracion": {
+        "horas": 12,
+        "minutos": 30
+      },
+      "CantidadDeAlertasFatiga": 5,
+      "RegistroDeAlertasFatiga": ["00:30", "00:45", "01:15", "02:30", "03:45"],
+      "CantidadDeAlertasSomnolencia": 3,
+      "RegistroDeAlertasSomnolencia": ["01:00", "02:00", "04:00"],
+      "CantidadDeDescansosTotales": 2,
+      "MinutosTotalesDeDescanso": 60,
+      "MinutosPromedioPorDescanso": 30
+    },
+    {
+      "ID": 3,
+      "Duracion": {
+        "horas": 8,
+        "minutos": 30
+      },
+      "CantidadDeAlertasFatiga": 3,
+      "RegistroDeAlertasFatiga": ["2:30", "4:45", "05:15"],
+      "CantidadDeAlertasSomnolencia": 4,
+      "RegistroDeAlertasSomnolencia": ["5:00", "06:00", "07:00", "08:00"],
+      "CantidadDeDescansosTotales": 2,
+      "MinutosTotalesDeDescanso": 30,
+      "MinutosPromedioPorDescanso": 15
+    }
+  ]
+}

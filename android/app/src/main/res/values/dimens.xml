@@ -31,4 +31,6 @@
     <integer name="bottom_sheet_control_text_min_ems">3</integer>
 
     <dimen name="fab_margin">16dp</dimen>
+
+    <dimen name="breakpoint_position">200dp</dimen>
 </resources>

@@ -33,4 +33,7 @@
     <color name="nav_item_selected">#FF8736</color>
     <color name="nav_item_default">#1E1E1E</color>
     <color name="white_stayalert">#E5E5E5</color>
+    <color name="pressed_color">#CDD16E2B</color>
+    <color name="default_color">#FF8736</color>
+    <color name="blue_stayalert">#101f38</color>
 </resources>
