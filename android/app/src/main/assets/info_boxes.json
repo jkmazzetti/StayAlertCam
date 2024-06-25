@@ -3,44 +3,142 @@
     {
       "ID": 1,
       "Duracion": {
-        "horas": 10,
-        "minutos": 30
+        "horas": 4,
+        "minutos": 15
       },
-      "CantidadDeAlertasFatiga": 5,
-      "RegistroDeAlertasFatiga": ["00:30", "00:45", "01:15", "02:30", "03:45"],
-      "CantidadDeAlertasSomnolencia": 3,
-      "RegistroDeAlertasSomnolencia": ["01:00", "02:00", "04:00"],
-      "CantidadDeDescansosTotales": 2,
-      "MinutosTotalesDeDescanso": 40,
-      "MinutosPromedioPorDescanso": 20
+      "CantidadDeAlertasFatiga": 3,
+      "RegistroDeAlertasFatiga": ["01:30", "02:45", "03:15"],
+      "CantidadDeAlertasSomnolencia": 2,
+      "RegistroDeAlertasSomnolencia": ["01:00", "03:00"],
+      "CantidadDeDescansosTotales": 3,
+      "MinutosTotalesDeDescanso": 30,
+      "MinutosPromedioPorDescanso": 10
     },
     {
       "ID": 2,
       "Duracion": {
-        "horas": 12,
-        "minutos": 30
+        "horas": 5,
+        "minutos": 0
       },
-      "CantidadDeAlertasFatiga": 5,
-      "RegistroDeAlertasFatiga": ["00:30", "00:45", "01:15", "02:30", "03:45"],
+      "CantidadDeAlertasFatiga": 4,
+      "RegistroDeAlertasFatiga": ["00:45", "02:15", "03:30", "04:45"],
       "CantidadDeAlertasSomnolencia": 3,
-      "RegistroDeAlertasSomnolencia": ["01:00", "02:00", "04:00"],
-      "CantidadDeDescansosTotales": 2,
-      "MinutosTotalesDeDescanso": 60,
-      "MinutosPromedioPorDescanso": 30
+      "RegistroDeAlertasSomnolencia": ["01:30", "03:30", "05:00"],
+      "CantidadDeDescansosTotales": 4,
+      "MinutosTotalesDeDescanso": 45,
+      "MinutosPromedioPorDescanso": 11.25
     },
     {
       "ID": 3,
       "Duracion": {
-        "horas": 8,
+        "horas": 3,
+        "minutos": 45
+      },
+      "CantidadDeAlertasFatiga": 2,
+      "RegistroDeAlertasFatiga": ["00:15", "02:00"],
+      "CantidadDeAlertasSomnolencia": 1,
+      "RegistroDeAlertasSomnolencia": ["01:45"],
+      "CantidadDeDescansosTotales": 2,
+      "MinutosTotalesDeDescanso": 20,
+      "MinutosPromedioPorDescanso": 10
+    },
+    {
+      "ID": 4,
+      "Duracion": {
+        "horas": 4,
         "minutos": 30
       },
       "CantidadDeAlertasFatiga": 3,
-      "RegistroDeAlertasFatiga": ["2:30", "4:45", "05:15"],
-      "CantidadDeAlertasSomnolencia": 4,
-      "RegistroDeAlertasSomnolencia": ["5:00", "06:00", "07:00", "08:00"],
+      "RegistroDeAlertasFatiga": ["01:00", "02:30", "03:45"],
+      "CantidadDeAlertasSomnolencia": 2,
+      "RegistroDeAlertasSomnolencia": ["01:15", "03:00"],
+      "CantidadDeDescansosTotales": 3,
+      "MinutosTotalesDeDescanso": 25,
+      "MinutosPromedioPorDescanso": 8.33
+    },
+    {
+      "ID": 5,
+      "Duracion": {
+        "horas": 5,
+        "minutos": 15
+      },
+      "CantidadDeAlertasFatiga": 4,
+      "RegistroDeAlertasFatiga": ["00:30", "01:45", "03:00", "04:15"],
+      "CantidadDeAlertasSomnolencia": 3,
+      "RegistroDeAlertasSomnolencia": ["01:15", "03:30", "04:45"],
+      "CantidadDeDescansosTotales": 4,
+      "MinutosTotalesDeDescanso": 40,
+      "MinutosPromedioPorDescanso": 10
+    },
+    {
+      "ID": 6,
+      "Duracion": {
+        "horas": 3,
+        "minutos": 0
+      },
+      "CantidadDeAlertasFatiga": 2,
+      "RegistroDeAlertasFatiga": ["00:45", "02:15"],
+      "CantidadDeAlertasSomnolencia": 1,
+      "RegistroDeAlertasSomnolencia": ["01:30"],
       "CantidadDeDescansosTotales": 2,
+      "MinutosTotalesDeDescanso": 15,
+      "MinutosPromedioPorDescanso": 7.5
+    },
+    {
+      "ID": 7,
+      "Duracion": {
+        "horas": 4,
+        "minutos": 45
+      },
+      "CantidadDeAlertasFatiga": 3,
+      "RegistroDeAlertasFatiga": ["00:30", "02:00", "03:30"],
+      "CantidadDeAlertasSomnolencia": 2,
+      "RegistroDeAlertasSomnolencia": ["01:15", "04:00"],
+      "CantidadDeDescansosTotales": 3,
       "MinutosTotalesDeDescanso": 30,
-      "MinutosPromedioPorDescanso": 15
+      "MinutosPromedioPorDescanso": 10
+    },
+    {
+      "ID": 8,
+      "Duracion": {
+        "horas": 2,
+        "minutos": 30
+      },
+      "CantidadDeAlertasFatiga": 1,
+      "RegistroDeAlertasFatiga": ["01:30"],
+      "CantidadDeAlertasSomnolencia": 0,
+      "RegistroDeAlertasSomnolencia": [],
+      "CantidadDeDescansosTotales": 1,
+      "MinutosTotalesDeDescanso": 10,
+      "MinutosPromedioPorDescanso": 10
+    },
+    {
+      "ID": 9,
+      "Duracion": {
+        "horas": 4,
+        "minutos": 0
+      },
+      "CantidadDeAlertasFatiga": 3,
+      "RegistroDeAlertasFatiga": ["00:45", "02:15", "03:45"],
+      "CantidadDeAlertasSomnolencia": 2,
+      "RegistroDeAlertasSomnolencia": ["01:30", "04:00"],
+      "CantidadDeDescansosTotales": 3,
+      "MinutosTotalesDeDescanso": 25,
+      "MinutosPromedioPorDescanso": 8.33
+    },
+    {
+      "ID": 10,
+      "Duracion": {
+        "horas": 3,
+        "minutos": 15
+      },
+      "CantidadDeAlertasFatiga": 3,
+      "RegistroDeAlertasFatiga": ["00:30", "02:00", "02:20"],
+      "CantidadDeAlertasSomnolencia": 2,
+      "RegistroDeAlertasSomnolencia": ["01:15", "02:40"],
+      "CantidadDeDescansosTotales": 2,
+      "MinutosTotalesDeDescanso": 24,
+      "MinutosPromedioPorDescanso": 12
     }
   ]
 }
