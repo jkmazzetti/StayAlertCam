@@ -3,257 +3,304 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingHorizontal="16dp">
+    android:paddingHorizontal="5dp">
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:padding="16dp">
 
-        <!-- Tabla -->
-        <TableLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/rounded_table_bg"
-            android:paddingHorizontal="15sp">
+            android:orientation="vertical">
 
-            <!-- Fila -->
-            <TableRow
+            <GridLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/rounded_table_bg"
-                android:paddingVertical="14sp">
+                android:columnCount="2"
+                android:orientation="horizontal"
+                android:rowCount="6">
 
-                <!-- Celda -->
-                <LinearLayout
+                <!-- Pie Chart -->
+                <com.github.mikephil.charting.charts.PieChart
+                    android:id="@+id/pieChartDescansos"
+                    android:layout_width="0dp"
+                    android:layout_height="175dp"
+                    android:layout_rowSpan="2"
+                    android:layout_columnWeight="1"
+                    android:layout_margin="8dp" />
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/card_recomendacion"
+                    android:layout_width="0dp"
+                    android:layout_height="175dp"
+                    android:layout_columnWeight="1"
+                    android:layout_margin="8dp"
+                    android:elevation="6dp"
+                    app:cardCornerRadius="12dp">
+
+
+                    <TextView
+                        android:id="@+id/tv_recomendacion"
+                        android:layout_width="match_parent"
+                        android:layout_height="175dp"
+                        android:gravity="center"
+                        android:padding="16dp"
+                        android:textColor="@android:color/black"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                </androidx.cardview.widget.CardView>
+
+                <!-- Card Duración -->
+                <androidx.cardview.widget.CardView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:layout_columnSpan="2"
+                    android:layout_columnWeight="1"
+                    android:layout_margin="8dp"
+                    android:elevation="6dp"
+                    app:cardCornerRadius="12dp">
 
-                    <TextView
-                        android:id="@+id/tv_totalViajes"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="NUM"
-                        android:textColor="@color/black"
-                        android:textSize="28sp" />
+                        android:orientation="vertical"
+                        android:padding="16dp">
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="Total de Viajes\nMonitoreados"
-                        android:textColor="@color/black"
-                        android:textSize="16sp" />
-                </LinearLayout>
-            </TableRow>
+                        <TextView
+                            android:id="@+id/tv_totalViajes"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="NUM"
+                            android:textColor="@color/black"
+                            android:textSize="28sp"
+                            android:textStyle="bold" />
 
-            <!-- Fila Separadora -->
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/black"
-                android:padding="1px" />
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="Total de Viajes\nMonitoreados"
+                            android:textColor="@color/gray"
+                            android:textSize="16sp" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
 
-            <!-- Fila -->
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/rounded_table_bg"
-                android:paddingVertical="14sp">
-
-
-                <!-- Celda -->
-                <LinearLayout
+                <!-- Card Alertas de Fatiga -->
+                <androidx.cardview.widget.CardView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:layout_columnWeight="1"
+                    android:layout_margin="8dp"
+                    android:elevation="6dp"
+                    app:cardCornerRadius="12dp">
 
-                    <TextView
-                        android:id="@+id/tv_duracion_total"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="NUM"
-                        android:textColor="@color/black"
-                        android:textSize="28sp" />
+                        android:orientation="vertical"
+                        android:padding="16dp">
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="Horas totales\nmanejando"
-                        android:textColor="@color/black"
-                        android:textSize="16sp" />
-                </LinearLayout>
+                        <TextView
+                            android:id="@+id/tv_duracion_total"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="NUM"
+                            android:textColor="@color/black"
+                            android:textSize="28sp"
+                            android:textStyle="bold" />
 
-                <!-- Celda -->
-                <LinearLayout
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="Horas totales\nmanejando"
+                            android:textColor="@color/gray"
+                            android:textSize="16sp" />
+
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <!-- Card Alertas de Somnolencia -->
+                <androidx.cardview.widget.CardView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:layout_columnWeight="1"
+                    android:layout_margin="8dp"
+                    android:elevation="6dp"
+                    app:cardCornerRadius="12dp">
 
-                    <TextView
-                        android:id="@+id/tv_duracion_promedio"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="NUM"
-                        android:textColor="@color/black"
-                        android:textSize="28sp" />
+                        android:orientation="vertical"
+                        android:padding="16dp">
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="Horas\nPromedio por Viaje"
-                        android:textColor="@color/black"
-                        android:textSize="16sp" />
-                </LinearLayout>
+                        <TextView
+                            android:id="@+id/tv_duracion_promedio"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="NUM"
+                            android:textColor="@color/black"
+                            android:textSize="28sp"
+                            android:textStyle="bold" />
 
-            </TableRow>
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="Horas\npor Viaje"
+                            android:textColor="@color/gray"
+                            android:textSize="16sp" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
 
-            <!-- Fila Separadora -->
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/black"
-                android:padding="1px" />
-
-            <!-- Fila -->
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/rounded_table_bg"
-                android:paddingVertical="14sp">
-
-                <!-- Celda -->
-                <LinearLayout
+                <!-- Card Paradas Realizadas -->
+                <androidx.cardview.widget.CardView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:layout_columnWeight="1"
+                    android:layout_margin="8dp"
+                    android:elevation="6dp"
+                    app:cardCornerRadius="12dp">
 
-                    <TextView
-                        android:id="@+id/tv_promedioFatiga"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="NUM"
-                        android:textColor="@color/black"
-                        android:textSize="28sp" />
+                        android:orientation="vertical"
+                        android:padding="16dp">
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="Promedio de\nAlertas por Fatiga"
-                        android:textColor="@color/black"
-                        android:textSize="16sp" />
-                </LinearLayout>
+                        <TextView
+                            android:id="@+id/tv_promedioFatiga"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="NUM"
+                            android:textColor="@color/black"
+                            android:textSize="28sp"
+                            android:textStyle="bold" />
 
-                <!-- Celda -->
-                <LinearLayout
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="Promedio\nAlertas Fatiga"
+                            android:textColor="@color/gray"
+                            android:textSize="16sp" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <!-- Card de Descanso Totales -->
+                <androidx.cardview.widget.CardView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:layout_columnWeight="1"
+                    android:layout_margin="8dp"
+                    android:elevation="6dp"
+                    app:cardCornerRadius="12dp">
 
-                    <TextView
-                        android:id="@+id/tv_promedioSomnolencia"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="NUM"
-                        android:textColor="@color/black"
-                        android:textSize="28sp" />
+                        android:orientation="vertical"
+                        android:padding="16dp">
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="Promedio de Alertas\npor Somnolencia"
-                        android:textColor="@color/black"
-                        android:textSize="16sp" />
-                </LinearLayout>
+                        <TextView
+                            android:id="@+id/tv_promedioSomnolencia"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="NUM"
+                            android:textColor="@color/black"
+                            android:textSize="28sp"
+                            android:textStyle="bold" />
 
-            </TableRow>
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="Promedio Alertas\nSomnolencia"
+                            android:textColor="@color/gray"
+                            android:textSize="16sp" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
 
-            <!-- Fila Separadora -->
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/black"
-                android:padding="1px" />
-
-            <!-- Fila -->
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/rounded_table_bg"
-                android:paddingVertical="14sp">
-
-                <!-- Celda -->
-                <LinearLayout
+                <!-- Card Descanso Promedio -->
+                <androidx.cardview.widget.CardView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:layout_columnWeight="1"
+                    android:layout_margin="8dp"
+                    android:elevation="6dp"
+                    app:cardCornerRadius="12dp">
 
-                    <TextView
-                        android:id="@+id/tv_promedioDescansos"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="NUM"
-                        android:textColor="@color/black"
-                        android:textSize="28sp" />
+                        android:orientation="vertical"
+                        android:padding="16dp">
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="Promedio de\nDescansos por Viaje"
-                        android:textColor="@color/black"
-                        android:textSize="16sp" />
-                </LinearLayout>
+                        <TextView
+                            android:id="@+id/tv_promedioDescansos"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="NUM"
+                            android:textColor="@color/black"
+                            android:textSize="28sp"
+                            android:textStyle="bold" />
 
-                <!-- Celda -->
-                <LinearLayout
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="Paradas por\nViaje"
+                            android:textColor="@color/gray"
+                            android:textSize="16sp" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <!-- Card Descanso Promedio -->
+                <androidx.cardview.widget.CardView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:layout_columnWeight="1"
+                    android:layout_margin="8dp"
+                    android:elevation="6dp"
+                    app:cardCornerRadius="12dp">
 
-                    <TextView
-                        android:id="@+id/tv_promedioMinDescanso"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="NUM"
-                        android:textColor="@color/black"
-                        android:textSize="28sp" />
+                        android:orientation="vertical"
+                        android:padding="16dp">
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="Promedio de Minutos\nde Descanso"
-                        android:textColor="@color/black"
-                        android:textSize="16sp" />
-                </LinearLayout>
+                        <TextView
+                            android:id="@+id/tv_promedioMinDescanso"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="NUM"
+                            android:textColor="@color/black"
+                            android:textSize="28sp"
+                            android:textStyle="bold" />
 
-            </TableRow>
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="Media Duración Descanso"
+                            android:textColor="@color/gray"
+                            android:textSize="16sp" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+            </GridLayout>
 
-
-        </TableLayout>
-
-    </ScrollView>
-
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 </LinearLayout>
-
-
-
