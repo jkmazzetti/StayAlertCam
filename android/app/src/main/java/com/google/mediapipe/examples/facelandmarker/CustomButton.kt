@@ -12,6 +12,11 @@ class CustomButton @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : AppCompatButton(context, attrs, defStyleAttr) {
 
+    // Función para cambiar el color de fondo del botón
+    fun changeBackgroundColor(colorResId: Int) {
+        backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, colorResId))
+    }
+
     init {
         // Obtén los atributos personalizados
         val attributes = context.obtainStyledAttributes(attrs, R.styleable.CustomButton)

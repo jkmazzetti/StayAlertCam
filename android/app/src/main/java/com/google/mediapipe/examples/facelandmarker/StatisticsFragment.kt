@@ -15,17 +15,22 @@ class StatisticsFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_statistics, container, false)
 
-        val btnViajeActual: Button = view.findViewById(R.id.btn_ultimo_viaje)
-        val btnHistorico: Button = view.findViewById(R.id.btn_historico)
+        val btnUltimoViaje: CustomButton = view.findViewById(R.id.btn_ultimo_viaje)
+        val btnHistorico: CustomButton = view.findViewById(R.id.btn_historico)
 
         loadFragment(StatisticsHistoricalFragment())
+        btnUltimoViaje.changeBackgroundColor(R.color.gray)
 
-        btnViajeActual.setOnClickListener {
+        btnUltimoViaje.setOnClickListener {
             loadFragment(StatisticsLastFragment())
+            btnHistorico.changeBackgroundColor(R.color.gray)
+            btnUltimoViaje.changeBackgroundColor(R.color.default_color)
         }
 
         btnHistorico.setOnClickListener {
             loadFragment(StatisticsHistoricalFragment())
+            btnUltimoViaje.changeBackgroundColor(R.color.gray)
+            btnHistorico.changeBackgroundColor(R.color.default_color)
         }
 
         return view

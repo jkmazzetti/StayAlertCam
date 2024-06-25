@@ -190,7 +190,7 @@
         android:paddingBottom="15dp">
 
         <com.google.mediapipe.examples.facelandmarker.CustomButton
-            android:id="@+id/btn_historico"
+            android:id="@+id/btn_alarma"
             android:layout_width="240dp"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/gray"
