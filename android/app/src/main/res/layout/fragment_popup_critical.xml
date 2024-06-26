@@ -2,10 +2,10 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/popup_tired"
+    android:id="@+id/popup_sleep"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:backgroundTint="@color/popup_tired"
+    android:backgroundTint="@color/popup_sleep"
     app:cardElevation="10dp"
     app:cardCornerRadius="16dp">
 
@@ -25,14 +25,14 @@
             app:srcCompat="@drawable/alarm_popup" />
 
         <TextView
-            android:id="@+id/popup_tired_text"
+            android:id="@+id/popup_sleep_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="25dp"
             android:layout_marginTop="25dp"
             android:layout_marginRight="25dp"
             android:fontFamily="sans-serif-black"
-            android:text="En los últimos 60 segundos, haz presentado signos de fatiga."
+            android:text="Se ha detectado una actividad inusual"
             android:gravity="center"
             android:textColor="@color/black"
             android:textSize="23sp"
@@ -40,17 +40,67 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
-        <TextView
-            android:id="@+id/textView"
+        <LinearLayout
+            android:id="@+id/count_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="32dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="@+id/popup_sleep_text"
+            app:layout_constraintStart_toStartOf="@+id/popup_sleep_text"
+            app:layout_constraintTop_toBottomOf="@+id/popup_sleep_text">
+
+
+            <TextView
+                android:layout_width="122dp"
+                android:layout_height="57dp"
+                android:gravity="center"
+                android:text="en"
+                android:textColor="@color/black"
+                android:textSize="23sp"
+                app:layout_constraintEnd_toEndOf="@+id/popup_sleep_text"
+                app:layout_constraintStart_toStartOf="@+id/popup_sleep_text"
+                app:layout_constraintTop_toBottomOf="@+id/popup_sleep_text" />
+
+            <TextView
+                android:id="@+id/count_text"
+                android:layout_width="133dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="60"
+                android:textColor="@color/white"
+                android:textSize="96sp"
+                app:layout_constraintEnd_toEndOf="@+id/popup_sleep_text"
+                app:layout_constraintStart_toStartOf="@+id/popup_sleep_text"
+                app:layout_constraintTop_toBottomOf="@+id/popup_sleep_text" />
+
+            <TextView
+                android:layout_width="122dp"
+                android:layout_height="57dp"
+                android:gravity="center"
+                android:text="segundos"
+                android:textColor="@color/black"
+                android:textSize="23sp"
+                app:layout_constraintEnd_toEndOf="@+id/popup_sleep_text"
+                app:layout_constraintStart_toStartOf="@+id/popup_sleep_text"
+                app:layout_constraintTop_toBottomOf="@+id/popup_sleep_text" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="217dp"
+            android:layout_height="57dp"
             android:layout_marginTop="10dp"
-            android:text="Por favor haga una parada."
+            android:text="Se dará aviso a sus contactos de emergencia"
+            android:gravity="center"
             android:textColor="@color/black"
             android:textSize="23sp"
-            app:layout_constraintEnd_toEndOf="@+id/popup_tired_text"
-            app:layout_constraintStart_toStartOf="@+id/popup_tired_text"
-            app:layout_constraintTop_toBottomOf="@+id/popup_tired_text" />
+            app:layout_constraintEnd_toEndOf="@+id/count_container"
+            app:layout_constraintStart_toStartOf="@+id/count_container"
+            app:layout_constraintTop_toBottomOf="@+id/count_container" />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -72,7 +122,7 @@
                 android:backgroundTint="@color/white_stayalert"
                 android:fontFamily="sans-serif-black"
                 android:padding="12dp"
-                android:text="Ok"
+                android:text="Cancelar"
                 android:textColor="@color/black"
                 android:textSize="12sp"
                 app:strokeColor="@color/white_stayalert"
@@ -81,5 +131,6 @@
                 tools:layout_editor_absoluteY="207dp" />
 
         </LinearLayout>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>
