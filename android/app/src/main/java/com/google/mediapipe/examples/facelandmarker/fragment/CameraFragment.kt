@@ -94,7 +94,8 @@ class CameraFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
     private var countBlink: Int = 0
     private var countYawn: Int = 0
     private var countTired: Int = 0
-    private val EAR_THRESH = 0.7
+    private var isTired: Boolean = false
+    private val EAR_THRESH = 0.5
     private val EAR_CONSEC_FRAMES = 3
     private val BLINK_DURATION_THRESHOLD = 100 // Duración mínima entre parpadeos en milisegundos
     private var lastYawnTime = SystemClock.elapsedRealtime()
@@ -115,6 +116,11 @@ class CameraFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
     private var inicioParpadeo = 0L
     private var inicioBostezo = 0L
     private var isDuracionPromedioParpadeo = false
+    private var isPromedioParpadeo = false
+    private var isPromedioBostezo = false
+
+    private var countTiredCalls = 0
+    private var lastAlertLevel = 0
 
     // Intervalo mínimo de tiempo entre evaluaciones en milisegundos
     private val intervaloEvaluacion = 3000 // 1 segundo
@@ -131,6 +137,7 @@ class CameraFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
     private var mediaPlayer: MediaPlayer? = null
 
     private var tripStarted = false
+    private var tripPause = false
 
     private var chronometerStarted = false
     private var timeElapsed: Long = 0
@@ -347,6 +354,7 @@ class CameraFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
         println("pauso el viaje")
         runnable?.let { handler.removeCallbacks(it) }
         timeElapsed = System.currentTimeMillis() - startTime
+        tripPause = true
         chronometerStarted = false
         showPausePopup()
         fragmentCameraBinding.playBtn.visibility = View.VISIBLE
@@ -363,6 +371,7 @@ class CameraFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
     fun resumeChronometer() {
         startTime = System.currentTimeMillis() - timeElapsed
         handler.post(runnable!!)
+        tripPause = false
         chronometerStarted = true
         fragmentCameraBinding.playBtn.visibility = View.GONE
         fragmentCameraBinding.pauseBtn.visibility = View.VISIBLE
@@ -419,19 +428,19 @@ class CameraFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
             canShowPopupWarning = false
             Handler(Looper.getMainLooper()).postDelayed({
                 canShowPopupWarning = true
-            }, 30000) // 30,000 ms = 30 segundos
+            }, 10000) // 30,000 ms = 30 segundos
         }
         if (type_popup === "danger"){
             canShowPopupDanger = false
             Handler(Looper.getMainLooper()).postDelayed({
                 canShowPopupDanger = true
-            }, 30000) // 30,000 ms = 30 segundos
+            }, 10000) // 30,000 ms = 30 segundos
         }
         if (type_popup === "critical"){
             canShowPopupCritical = false
             Handler(Looper.getMainLooper()).postDelayed({
                 canShowPopupCritical = true
-            }, 30000) // 30,000 ms = 30 segundos
+            }, 10000) // 30,000 ms = 30 segundos
         }
     }
 
@@ -772,15 +781,28 @@ class CameraFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
             fragmentCameraBinding.viewFinder.display.rotation
     }
 
-    private fun alertarFatigaSomnolencia() {
-        // Implementación de la alerta (puede ser una señal sonora, visual, etc.)
-        println("Alerta: Fatiga o somnolencia detectada")
-    }
+    fun popupTiredAlerts() {
+        countTiredCalls++
 
-    private fun obtenerDuracionParpadeo(): Long {
-        // Implementar la lógica para obtener la duración del parpadeo usando los datos disponibles
-        // Esto es un ejemplo y debe reemplazarse con la lógica real de detección de duración
-        return 400 // Duración del parpadeo en milisegundos
+        when {
+            countTiredCalls == 1 && lastAlertLevel < 1 -> {
+                showGesturePopupWarning()
+                fragmentCameraBinding.containerPersonYawn.setBackgroundResource(R.drawable.round_background_warning)
+                lastAlertLevel = 1
+            }
+            countTiredCalls == 2 && lastAlertLevel < 2 -> {
+                showGesturePopupWarning()
+                fragmentCameraBinding.containerPersonYawn.setBackgroundResource(R.drawable.round_background_danger)
+                fragmentCameraBinding.containerSleepSing.setBackgroundResource(R.drawable.round_background_warning)
+                lastAlertLevel = 2
+            }
+            countTiredCalls >= 3 -> {
+                showGesturePopupDanger()
+                fragmentCameraBinding.containerPersonYawn.setBackgroundResource(R.drawable.round_background_danger)
+                fragmentCameraBinding.containerSleepSing.setBackgroundResource(R.drawable.round_background_danger)
+                lastAlertLevel = 3 // Mantener este valor para permitir ejecuciones repetidas
+            }
+        }
     }
 
     private fun isTiredGestureDetected(resultBundle: FaceLandmarkerHelper.ResultBundle) {
@@ -864,7 +886,7 @@ class CameraFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
         val duracionPromedioParpadeo = if (cantidadParpadeos > 0) ventanaParpadeos.sumOf { it.second } / cantidadParpadeos else 0
 
         println("Fatiga total parpadeos 1 ${ventanaParpadeos.size}")
-        println("Fatiga total final parpadeos ${ventanaParpadeos.size}, - countTired 1 $countTired, -  duracionPromedioParpadeo 1 $duracionPromedioParpadeo, - cantidadBostezos $cantidadBostezos ")
+        println("Fatiga total final parpadeos ${ventanaParpadeos.size}, - countTiredCalls 1 $countTiredCalls, -  duracionPromedioParpadeo 1 $duracionPromedioParpadeo, - cantidadBostezos $cantidadBostezos ")
         println("Fatiga total bostezos 1 ${ventanaBostezos.size}")
         println("Fatiga countTired 1 $countTired ")
         println("ventanaTiempo $ventanaTiempo ")
@@ -887,38 +909,54 @@ class CameraFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
                 ultimaEvaluacion = tiempoActual
                 println("Fatiga duracionPromedioParpadeo 1 $duracionPromedioParpadeo ")
                 // Verificar si hay signos de fatiga o somnolencia
-                if (cantidadParpadeos > umbralFatigaParpadeosAlto || cantidadParpadeos < umbralFatigaParpadeosBajo ||
-                    duracionPromedioParpadeo > 400 || cantidadBostezos > umbralFatigaBostezos) {
+                if (cantidadParpadeos >= umbralFatigaParpadeosAlto || cantidadParpadeos <= umbralFatigaParpadeosBajo ||
+                    duracionPromedioParpadeo >= 400 || cantidadBostezos >= umbralFatigaBostezos) {
                     if(duracionPromedioParpadeo > 400 && !isDuracionPromedioParpadeo){
                         isDuracionPromedioParpadeo = true
-                        countTired++
+                        isTired = true
                         Handler(Looper.getMainLooper()).postDelayed({
                             isDuracionPromedioParpadeo = false
                         }, 40000)
-                    } else if(cantidadParpadeos > umbralFatigaParpadeosAlto || cantidadParpadeos < umbralFatigaParpadeosBajo || cantidadBostezos > umbralFatigaBostezos){
-                        countTired++
+                    } else if(!isPromedioParpadeo && (cantidadParpadeos > umbralFatigaParpadeosAlto || cantidadParpadeos < umbralFatigaParpadeosBajo)){
+                        isPromedioParpadeo = true
+                        isTired = true
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            isPromedioParpadeo = false
+                        }, 10000)
+                    } else if(!isPromedioBostezo && cantidadBostezos >= umbralFatigaBostezos){
+                        isPromedioBostezo = true
+                        isTired = true
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            isPromedioBostezo = false
+                        }, 61000)
                     }
 
                 } else {
-                    countTired = 0 // Resetear el contador si no hay signos de fatiga
+                    isTired = false
+                    // Resetear el contador si no hay signos de fatiga
                 }
 
-
-                // Mostrar alertas según el conteo de fatiga
-                if (countTired === 1) {
-                    showGesturePopupWarning()
-                    fragmentCameraBinding.containerPersonYawn.setBackgroundResource(R.drawable.round_background_warning)
-                }
-                if (countTired === 2) {
-                    showGesturePopupWarning()
-                    fragmentCameraBinding.containerSleepSing.setBackgroundResource(R.drawable.round_background_warning)
+                if(isTired){
+                    isTired = false
+                    popupTiredAlerts()
                 }
 
-                if (countTired >= 3) {
-                    showGesturePopupDanger()
-                    fragmentCameraBinding.containerPersonYawn.setBackgroundResource(R.drawable.round_background_danger)
-                    fragmentCameraBinding.containerSleepSing.setBackgroundResource(R.drawable.round_background_danger)
-                }
+//                // Mostrar alertas según el conteo de fatiga
+//                if (countTired === 1) {
+//                    showGesturePopupWarning()
+//                    fragmentCameraBinding.containerPersonYawn.setBackgroundResource(R.drawable.round_background_warning)
+//                }
+//                if (countTired === 2) {
+//                    showGesturePopupWarning()
+//                    fragmentCameraBinding.containerPersonYawn.setBackgroundResource(R.drawable.round_background_danger)
+//                    fragmentCameraBinding.containerSleepSing.setBackgroundResource(R.drawable.round_background_warning)
+//                }
+//
+//                if (countTired >= 3) {
+//                    showGesturePopupDanger()
+//                    fragmentCameraBinding.containerPersonYawn.setBackgroundResource(R.drawable.round_background_danger)
+//                    fragmentCameraBinding.containerSleepSing.setBackgroundResource(R.drawable.round_background_danger)
+//                }
             }
         }
     }
@@ -929,7 +967,7 @@ class CameraFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
     override fun onResults(
         resultBundle: FaceLandmarkerHelper.ResultBundle
     ) {
-        if (!tripStarted) {
+        if (!tripStarted ) {
             return  // Si tripStarted es falso, salir sin hacer nada
         }
         activity?.runOnUiThread {
@@ -944,7 +982,10 @@ class CameraFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
                     resultBundle.inputImageWidth,
                     RunningMode.LIVE_STREAM
                 )
-                isTiredGestureDetected(resultBundle)
+
+                if (!tripPause){
+                    isTiredGestureDetected(resultBundle)
+                }
                 fragmentCameraBinding.overlay.invalidate()
             }
         }
