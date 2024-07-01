@@ -34,15 +34,14 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        replaceFragment(StatisticsFragment())
+        replaceFragment(CameraFragment())
 
         binding.navigation.setOnNavigationItemSelectedListener{
 
             when(it.itemId){
 
-                R.id.statistics_fragment -> replaceFragment(StatisticsFragment())
                 R.id.camera_fragment -> replaceFragment(CameraFragment())
-                R.id.alarm_fragment -> replaceFragment(AlarmFragment())
+                R.id.statistics_fragment -> replaceFragment(StatisticsFragment())
                 R.id.contacts_fragment -> replaceFragment(ContactsFragment())
 
                 else ->{
