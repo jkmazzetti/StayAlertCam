@@ -227,31 +227,6 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- Header Section -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fillViewport="true"
-                android:orientation="vertical"
-                android:paddingHorizontal="28sp"
-                android:paddingVertical="15dp"
-                android:layout_columnSpan="2">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:text="Alertas Recibidas"
-                    android:textColor="@color/black"
-                    android:textSize="28sp"
-                    android:textStyle="bold" />
-
-                <com.github.mikephil.charting.charts.LineChart
-                    android:id="@+id/lineChart"
-                    android:layout_width="match_parent"
-                    android:layout_height="200dp"
-                    android:layout_marginTop="14dp" />
-            </LinearLayout>
         </GridLayout>
     </androidx.core.widget.NestedScrollView>
 </LinearLayout>

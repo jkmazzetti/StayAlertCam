@@ -22,29 +22,21 @@
                 android:orientation="horizontal"
                 android:rowCount="6">
 
-                <!-- Pie Chart -->
-                <com.github.mikephil.charting.charts.PieChart
-                    android:id="@+id/pieChartDescansos"
-                    android:layout_width="0dp"
-                    android:layout_height="175dp"
-                    android:layout_rowSpan="2"
-                    android:layout_columnWeight="1"
-                    android:layout_margin="8dp" />
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/card_recomendacion"
                     android:layout_width="0dp"
-                    android:layout_height="175dp"
+                    android:layout_height="wrap_content"
+                    android:layout_columnSpan="2"
                     android:layout_columnWeight="1"
                     android:layout_margin="8dp"
                     android:elevation="6dp"
                     app:cardCornerRadius="12dp">
 
-
                     <TextView
                         android:id="@+id/tv_recomendacion"
                         android:layout_width="match_parent"
-                        android:layout_height="175dp"
+                        android:layout_height="wrap_content"
                         android:gravity="center"
                         android:padding="16dp"
                         android:textColor="@android:color/black"
