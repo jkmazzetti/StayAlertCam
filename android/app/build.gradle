@@ -124,4 +124,7 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.1"
 
     implementation 'com.google.mediapipe:tasks-vision:0.10.14'
+
+    //Charts
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 }
