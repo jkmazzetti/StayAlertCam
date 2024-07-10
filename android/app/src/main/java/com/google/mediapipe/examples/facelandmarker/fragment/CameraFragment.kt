@@ -840,6 +840,7 @@ class CameraFragment : Fragment(), FaceLandmarkerHelper.LandmarkerListener {
                 val duracionParpadeo = tiempoActual - inicioParpadeo
                 if (duracionParpadeo > 2000) {
                     // Ejecutar las tres líneas de código si el parpadeo dura más de 2 segundos
+                    canShowPopupDanger = true
                     showGesturePopupDanger()
                     fragmentCameraBinding.containerPersonYawn.setBackgroundResource(R.drawable.round_background_danger)
                     fragmentCameraBinding.containerSleepSing.setBackgroundResource(R.drawable.round_background_danger)
